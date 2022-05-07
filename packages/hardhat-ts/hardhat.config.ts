@@ -4,7 +4,6 @@ import 'tsconfig-paths/register';
 import './helpers/hardhat-imports';
 
 import path from 'path';
-
 import { hardhatNamedAccounts } from '@scaffold-eth/common/src/constants';
 import { getNetworks } from '@scaffold-eth/common/src/functions';
 import { config as envConfig } from 'dotenv';
@@ -110,6 +109,11 @@ export const config: HardhatUserConfig = {
       tasks: ['compile'],
       files: ['./contracts'],
       verbose: false,
+    },
+    test: {
+      tasks: [{ command: 'test', params: { testFiles: ['{path}'] } }],
+      files: ['./test/**/*'],
+      verbose: true,
     },
   },
   gasReporter: {

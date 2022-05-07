@@ -14,7 +14,7 @@
     "moduleResolution": "Node",
     "incremental": true,
     "resolveJsonModule": true,
-    "isolatedModules": true,
+    "isolatedModules": false,
     "noEmit": true,
     "rootDir": ".",
     "baseUrl": ".",
@@ -28,7 +28,7 @@
       "tasks/*": ["./tasks/*"]
     }
   },
-  "include": ["types", "scripts", "test", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts"],
+  "include": ["types", "scripts", "test", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts", "generated/contract-types"],
   "exclude": ["**/node_modules"],
   "ts-node": {
     "compilerOptions": {
@@ -37,5 +37,6 @@
     "moduleTypes": {
       "**/*": "cjs"
     }
-  }
+  },
+  "files": ["./hardhat.config.ts", "helpers/types/__global.ts"]
 }

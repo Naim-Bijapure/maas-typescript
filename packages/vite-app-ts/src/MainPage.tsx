@@ -1,6 +1,5 @@
-import '~~/styles/main-page.css';
+import '~~/styles/main-page.scss';
 import { NETWORKS } from '@scaffold-eth/common/src/constants';
-import { GenericContract } from 'eth-components/ant/generic-contract';
 import { useContractReader, useBalance, useEthersAdaptorFromProviderOrSigners, useEventListener } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
@@ -8,8 +7,10 @@ import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-import { MainPageFooter, MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
+import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
+import ManageWallets from './views/ManageWallets';
+import Wallet from './views/Wallet';
 
 import { useAppContracts, useConnectAppContracts, useLoadAppContracts } from '~~/components/contractContext';
 import { useCreateAntNotificationHolder } from '~~/components/main/hooks/useAntNotification';
@@ -72,7 +73,7 @@ export const MainPage: FC = () => {
 
   // init contracts
   const yourContract = useAppContracts('YourContract', ethersAppContext.chainId);
-  const yourNFT = useAppContracts('YourNFT', ethersAppContext.chainId);
+  // const yourNFT = useAppContracts('YourNFT', ethersAppContext.chainId);
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
 
   // keep track of a variable from the contract in the local React state:
@@ -106,36 +107,20 @@ export const MainPage: FC = () => {
   // This is the list of tabs and their contents
   const pageList: TContractPageList = {
     mainPage: {
-      name: 'YourContract',
+      name: 'manageWallets',
       content: (
-        <GenericContract
-          contractName="YourContract"
-          contract={yourContract}
-          mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
-          blockExplorer={scaffoldAppProviders.targetNetwork.blockExplorer}
-        />
+        <>
+          <ManageWallets scaffoldAppProviders={scaffoldAppProviders} />
+        </>
       ),
     },
     pages: [
       {
-        name: 'YourNFT',
+        name: 'wallet/:walletId',
         content: (
-          <GenericContract
-            contractName="YourNFT"
-            contract={yourNFT}
-            mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
-            blockExplorer={scaffoldAppProviders.targetNetwork.blockExplorer}></GenericContract>
-        ),
-      },
-      {
-        name: 'Dai',
-        content: (
-          <GenericContract
-            contractName="Dai"
-            contract={mainnetDai}
-            mainnetAdaptor={scaffoldAppProviders.mainnetAdaptor}
-            blockExplorer={scaffoldAppProviders.targetNetwork.blockExplorer}
-          />
+          <>
+            <Wallet />
+          </>
         ),
       },
     ],
@@ -147,19 +132,10 @@ export const MainPage: FC = () => {
       <MainPageHeader scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
       {/* Routes should be added between the <Switch> </Switch> as seen below */}
       <BrowserRouter>
-        {tabMenu}
-        <Switch>
-          {tabContents}
-          {/* Subgraph also disabled in MainPageMenu, it does not work, see github issue https://github.com/scaffold-eth/scaffold-eth-typescript/issues/48! */}
-          {/*
-          <Route path="/subgraph">
-            <Subgraph subgraphUri={subgraphUri} mainnetProvider={scaffoldAppProviders.mainnetAdaptor?.provider} />
-          </Route>
-          */}
-        </Switch>
+        {/* {tabMenu} */}
+        <Switch>{tabContents}</Switch>
       </BrowserRouter>
-
-      <MainPageFooter scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
+      {/* <MainPageFooter scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} /> */}
       <div style={{ position: 'absolute' }}>{notificationHolder}</div>
     </div>
   );

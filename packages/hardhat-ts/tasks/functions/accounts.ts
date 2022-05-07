@@ -2,9 +2,8 @@ import { isAddress, getAddress } from '@ethersproject/address';
 import { mnemonicToSeed } from 'bip39';
 import { privateToAddress } from 'ethereumjs-util';
 import { hdkey } from 'ethereumjs-wallet';
-import { ethers, Wallet } from 'ethers';
+import { ethers, Signer, Wallet } from 'ethers';
 import { keccak256, randomBytes } from 'ethers/lib/utils';
-import { SignerWithAddress } from 'hardhat-deploy-ethers/signers';
 import { THardhatRuntimeEnvironmentExtended } from 'helpers/types/THardhatRuntimeEnvironmentExtended';
 import { debugLog } from 'tasks/functions/debug';
 
@@ -45,13 +44,13 @@ export const createAddress = (from: string, initCode: string): { address: string
 };
 
 export interface THardhatAccounts {
-  deployer: SignerWithAddress;
-  user1: SignerWithAddress;
-  user2: SignerWithAddress;
-  user3: SignerWithAddress;
-  user4: SignerWithAddress;
-  user5: SignerWithAddress;
-  governance: SignerWithAddress;
+  deployer: Signer;
+  user1: Signer;
+  user2: Signer;
+  user3: Signer;
+  user4: Signer;
+  user5: Signer;
+  governance: Signer;
 }
 
 export const getHardhatSigners = async (hre: THardhatRuntimeEnvironmentExtended): Promise<THardhatAccounts> => {

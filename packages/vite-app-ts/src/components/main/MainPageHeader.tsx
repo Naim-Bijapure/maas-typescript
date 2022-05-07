@@ -1,6 +1,6 @@
-import { getNetwork } from '@ethersproject/networks';
-import { Alert, PageHeader } from 'antd';
-import { Account } from 'eth-components/ant';
+import { LogoutOutlined as LogoutIcon, LoginOutlined as LoginIcon } from '@ant-design/icons';
+import { getNetwork, Networkish } from '@ethersproject/networks';
+import { Address, Balance, Blockie } from 'eth-components/ant';
 import { useGasPrice } from 'eth-hooks';
 import {
   useEthersAppContext,
@@ -8,10 +8,10 @@ import {
   NoStaticJsonRPCProviderFoundError,
   CouldNotActivateError,
   UserClosedModalError,
+  TEthersModalConnector,
 } from 'eth-hooks/context';
-import React, { FC, ReactElement, ReactNode, useCallback } from 'react';
+import React, { FC, ReactNode, useCallback } from 'react';
 
-import { FaucetHintButton } from '~~/components/common/FaucetHintButton';
 import { useAntNotification } from '~~/components/main/hooks/useAntNotification';
 import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 import { getNetworkInfo } from '~~/functions';
@@ -37,34 +37,6 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
   // 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation
   const [gasPrice] = useGasPrice(ethersAppContext.chainId, 'fast', getNetworkInfo(ethersAppContext.chainId));
 
-  /**
-   * this shows the page header and other informaiton
-   */
-  const left = (
-    <>
-      <div>
-        <PageHeader
-          title="🏭 Scaffold-Eth"
-          subTitle={
-            <span>
-              v2.1 - [
-              <a href="https://youtu.be/aYMj00JoIug" target="_blank" rel="noreferrer">
-                <span style={{ marginRight: 4 }}>🎥 </span> 8min speed run
-              </a>
-              ] - [
-              <a href="https://trello.com/b/ppbUs796/buidlguidlcom-idea-board" target="_blank" rel="noreferrer">
-                <span style={{ marginRight: 4 }}>💡 </span> trello
-              </a>
-              ]{' '}
-            </span>
-          }
-          style={{ cursor: 'pointer' }}
-        />
-      </div>
-      {props.children}
-    </>
-  );
-
   const onLoginError = useCallback(
     (e: Error) => {
       if (e instanceof UserClosedModalError) {
@@ -89,60 +61,94 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
     [notification]
   );
 
-  /**
-   * 👨‍💼 Your account is in the top right with a wallet at connect options
-   */
-  const right = (
-    <div style={{ position: 'fixed', textAlign: 'right', right: 0, top: 0, padding: 10, zIndex: 1 }}>
-      <Account
-        createLoginConnector={props.scaffoldAppProviders.createLoginConnector}
-        loginOnError={onLoginError}
-        ensProvider={props.scaffoldAppProviders.mainnetAdaptor?.provider}
-        price={props.price}
-        blockExplorer={props.scaffoldAppProviders.targetNetwork.blockExplorer}
-        hasContextConnect={true}
-      />
-      <FaucetHintButton scaffoldAppProviders={props.scaffoldAppProviders} gasPrice={gasPrice} />
-      {props.children}
-    </div>
+  const ProfileSection: ReactNode = (
+    <>
+      <div className={ethersAppContext.active ? 'flex-none' : 'hidden'}>
+        <div className="n-balance">
+          <Balance price={props.price} address={ethersAppContext.account as string} />
+        </div>
+        <div className="dropdown dropdown-end">
+          <label tabIndex={0} className="btn btn-ghost btn-circle avatar">
+            <div className="w-10 rounded-full">
+              <Blockie scale={10} address={ethersAppContext.account as string} />
+            </div>
+          </label>
+          <ul tabIndex={0} className="w-56 p-0 mt-3 shadow menu menu-compact dropdown-content bg-base-100 rounded-box">
+            <li>
+              <div className="n-address">
+                <Address address={ethersAppContext.account} />
+              </div>
+            </li>
+            <li className="">
+              <a
+                onClick={(): void => {
+                  ethersAppContext.disconnectModal();
+                }}>
+                logout
+                <LogoutIcon title="logout" />
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </>
   );
 
-  /**
-   * display the current network on the top left
-   */
-  let networkDisplay: ReactElement | undefined;
-  if (selectedChainId && selectedChainId !== props.scaffoldAppProviders.targetNetwork.chainId) {
-    const description = (
-      <div>
-        You have <b>{getNetwork(selectedChainId)?.name}</b> selected and you need to be on{' '}
-        <b>{getNetwork(props.scaffoldAppProviders.targetNetwork)?.name ?? 'UNKNOWN'}</b>.
+  const Login: ReactNode = (
+    <>
+      <div className={!ethersAppContext.active ? 'flex-none' : 'hidden'}>
+        <div className="mx-3 text-3xl">
+          <LoginIcon
+            onClick={(): void => {
+              // console.log('ethersAppContext.active: ', ethersAppContext.active);
+              const connector = props.scaffoldAppProviders.createLoginConnector?.();
+              ethersAppContext.openModal(connector as TEthersModalConnector, onLoginError);
+            }}
+          />
+        </div>
       </div>
-    );
-    networkDisplay = (
-      <div style={{ zIndex: 2, position: 'absolute', right: 0, top: 90, padding: 16 }}>
-        <Alert message="⚠️ Wrong Network" description={description} type="error" closable={false} />
-      </div>
-    );
-  } else {
-    networkDisplay = (
+    </>
+  );
+  const WrongNetwork: ReactNode = (
+    <>
       <div
-        style={{
-          position: 'absolute',
-          right: 16,
-          top: 84,
-          padding: 10,
-          color: props.scaffoldAppProviders.targetNetwork.color,
-        }}>
-        {props.scaffoldAppProviders.targetNetwork.name}
+        className={
+          selectedChainId && selectedChainId !== props.scaffoldAppProviders.targetNetwork.chainId
+            ? 'alert alert-warning shadow-lg ml-auto my-2 w-1/2'
+            : 'hidden'
+        }>
+        <div>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="flex-shrink-0 w-6 h-6 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+            />
+          </svg>
+          <span>
+            You have <b>{getNetwork(selectedChainId as Networkish)?.name}</b> selected and you need to be on{' '}
+            <b>{getNetwork(props.scaffoldAppProviders.targetNetwork)?.name ?? 'UNKNOWN'}</b>.
+          </span>
+        </div>
       </div>
-    );
-  }
+    </>
+  );
 
   return (
     <>
-      {left}
-      {networkDisplay}
-      {right}
+      <div className="shadow-md navbar bg-base-100">
+        <div className="flex-1">
+          <a className="text-xl normal-case btn btn-ghost">MultiSig</a>
+        </div>
+        {ProfileSection}
+        {Login}
+      </div>
+      {WrongNetwork}
     </>
   );
 };
