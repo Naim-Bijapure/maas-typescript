@@ -3,8 +3,7 @@ import { useEthersAppContext } from 'eth-hooks/context';
 import React, { ReactNode } from 'react';
 
 import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
-
-// import { Link } from '@types/react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface IContractList {
   scaffoldAppProviders: IScaffoldAppProviders;
@@ -27,7 +26,9 @@ const wallet: ReactNode = (
           <div>2 signature requred</div>
         </p>
         <div className="justify-end card-actions">
-          <button className="btn btn-secondary">Open</button>
+          <Link to={'/wallet/asasfasdf'}>
+            <button className="btn btn-secondary">Open</button>
+          </Link>
         </div>
       </div>
     </div>
