@@ -1,3 +1,5 @@
+import { AppstoreAddOutlined as AddWalletIcon } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import { PunkBlockie, Address, Balance } from 'eth-components/ant';
 import { useEthersAppContext } from 'eth-hooks/context';
 import React, { ReactNode } from 'react';
@@ -47,9 +49,15 @@ const Index: React.FC<IContractList> = ({ scaffoldAppProviders }) => {
   const tempArr = [1, 2, 3, 4, 5, 6];
   return (
     <div className="m-5">
-      <div className="flex flex-col-reverse items-center justify-between xl:flex xl:flex-row xl:justify-between">
-        <div className="text-2xl font-bold xl:text-5xl">Your wallets</div>
-        <button className="m-2 btn btn-primary">Create Wallet</button>
+      <div className="flex  items-center justify-around xl:flex xl:flex-row xl:justify-between ">
+        <div className="text-3xl font-bold  xl:text-5xl ">Your wallets</div>
+        <div>
+          <Tooltip title="Create wallet" placement="bottom">
+            <AddWalletIcon className="text-4xl xl:mr-4" />
+          </Tooltip>
+        </div>
+        {/* <button className="btn btn-primary w-[30%] ">
+        </button> */}
       </div>
       <div className="flex flex-wrap justify-between">
         {tempArr.map((index) => {
