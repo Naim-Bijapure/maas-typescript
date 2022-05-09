@@ -1,9 +1,9 @@
 import { PunkBlockie, Address, Balance } from 'eth-components/ant';
 import { useEthersAppContext } from 'eth-hooks/context';
 import React, { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 
 import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
-import { Link } from 'react-router-dom';
 
 interface IContractList {
   scaffoldAppProviders: IScaffoldAppProviders;
@@ -11,21 +11,29 @@ interface IContractList {
 
 const wallet: ReactNode = (
   <>
-    <div className="h-full m-2 shadow-xl card card-compact bg-base-100 lg:w-[30%] sm:w-[100%] glass">
-      <figure className="h-48 scale-50 ">
-        {/* <img src="https://api.lorem.space/image/car?w=400&h=225" alt="car!" /> */}
-        <PunkBlockie withQr={true} scale={1} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+    <div className="flex w-full mt-5 shadow-2xl card bg-base-300  glass xl:w-[30%] sm:w-[100%] ">
+      {/* qr */}
+      <figure className="">
+        <div className="h-[200px] scale-50">
+          <PunkBlockie withQr={true} scale={0} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+        </div>
       </figure>
-      <div className="card-body ">
-        <h2 className="flex flex-col items-start card-title n-address md:flex md:flex-row md:items-center">
-          <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+
+      <div className="items-center text-center card-body n--red ">
+        <div className="card-title n-balance-lg  xl:mt-4">
           <Balance price={1000} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-        </h2>
-        <p>
-          <div>4 owners</div>
-          <div>2 signature requred</div>
-        </p>
-        <div className="justify-end card-actions">
+        </div>
+        <div className="card-title n-balance-lg  xl:mt-0">Test wallet</div>
+
+        <div className=" text-left">
+          <div className="n-address">
+            <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+          </div>
+          <div className="font-bold text-md ">4 owners</div>
+          <div className="font-bold text-md ">4 signature required</div>
+        </div>
+        <div className=" items-center justify-between  w-full xl:ml-auto card-actions">
+          <div className="font-bold text-gray-400 ">10/04/2022 10:10:10</div>
           <Link to={'/wallet/asasfasdf'}>
             <button className="btn btn-secondary">Open</button>
           </Link>
@@ -38,9 +46,9 @@ const Index: React.FC<IContractList> = ({ scaffoldAppProviders }) => {
   const ethersAppContext = useEthersAppContext();
   const tempArr = [1, 2, 3, 4, 5, 6];
   return (
-    <div className="m-10">
-      <div className="flex flex-col-reverse justify-between lg:flex lg:flex-row lg:justify-between">
-        <span className="text-5xl font-bold ">Your wallets</span>
+    <div className="m-5">
+      <div className="flex flex-col-reverse items-center justify-between xl:flex xl:flex-row xl:justify-between">
+        <div className="text-2xl font-bold xl:text-5xl">Your wallets</div>
         <button className="m-2 btn btn-primary">Create Wallet</button>
       </div>
       <div className="flex flex-wrap justify-between">
