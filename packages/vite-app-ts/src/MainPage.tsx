@@ -7,7 +7,7 @@ import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
+import { MainPageHeader, createPagesAndTabs, TContractPageList, MainPageFooter } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';

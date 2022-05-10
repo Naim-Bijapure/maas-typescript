@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import moment from "moment";
+import { IContractData } from "./types";
 
 const app = express();
 const port = 4000;
@@ -9,7 +10,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 let transcactionsData = [];
-let contractsData = {};
+let contractsData: IContractData[] = [];
 let TX_DATA_LIMIT = 1000;
 
 app.get("/api/:tx_id", async (req, res) => {
@@ -54,7 +55,9 @@ app.post("/api/add", async (req, res) => {
 app.get("/api/contractList/:account_id", async (req, res) => {
     let { account_id } = req.params;
 
-    let allContracts = contractsData[account_id];
+    let allContracts = contractsData
+        .filter((data) => data.owners.includes(account_id))
+        .sort((dataA, dataB) => dataB.contractId - dataA.contractId);
 
     return res.json({ allContracts });
 });
@@ -67,10 +70,10 @@ app.post("/api/createContract", async (req, res) => {
     // let { contract_id } = req.params;
     let { walletName, account, contractAddress, contractId, owners, signaturesRequired, contractFundAmt } = req.body;
 
-    if (contractsData[account] === undefined) {
-        contractsData[account] = [];
-    }
-    contractsData[account].push({
+    // if (contractsData[account] === undefined) {
+    //     contractsData[account] = [];
+    // }
+    contractsData.push({
         walletName,
         contractAddress,
         contractId,
@@ -78,7 +81,7 @@ app.post("/api/createContract", async (req, res) => {
         owners,
         signaturesRequired,
         contractFundAmt,
-        praposals: [],
+        proposals: [],
         createdAt: moment().format("DD-MM-YY HH:MM:ss"),
     });
 
@@ -88,10 +91,10 @@ app.post("/api/createContract", async (req, res) => {
 // ---------------------
 // To  get a specific contract
 // ---------------------
-app.get("/api/contract/:account_id/:contractId", async (req, res) => {
-    let { contractId, account_id } = req.params;
+app.get("/api/contract/:contractId", async (req, res) => {
+    let { contractId } = req.params;
 
-    let contractData = contractsData[account_id].find((contractData) => contractData.contractId === Number(contractId));
+    let contractData = contractsData.find((contractData) => contractData.contractId === Number(contractId));
 
     console.log("contractData: ", contractData);
 

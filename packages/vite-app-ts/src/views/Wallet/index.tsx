@@ -242,7 +242,7 @@ const Index: React.FC = () => {
     <div className="m-5">
       <Tabs defaultActiveKey="1" centered onChange={callback} size={'large'} type="card">
         <TabPane tab="Wallet" key="1">
-          <WalletInfoCard isManageWalletScreen={false} />
+          <WalletInfoCard contractId={0} isManageWalletScreen={false} />
         </TabPane>
         <TabPane tab="Transcaction pool" key="2">
           <div className="flex flex-col items-center justify-center ">

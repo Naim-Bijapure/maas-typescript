@@ -3,10 +3,16 @@ import { PunkBlockie, Balance, Address } from 'eth-components/ant';
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { useStore } from '~~/store/useStore';
+
 interface IWalletInfoCard {
   isManageWalletScreen: boolean;
+  contractId: number;
 }
-const WalletInfoCard: React.FC<IWalletInfoCard> = ({ isManageWalletScreen }) => {
+const WalletInfoCard: React.FC<IWalletInfoCard> = ({ isManageWalletScreen, contractId }) => {
+  const [state, dispatch] = useStore();
+  const contractDetails = state.contracts?.find((data) => Number(data['contractId']) === Number(contractId));
+  console.log('contractDetails: ', contractDetails);
   return (
     <>
       {isManageWalletScreen && (
@@ -16,26 +22,26 @@ const WalletInfoCard: React.FC<IWalletInfoCard> = ({ isManageWalletScreen }) => 
               {/* qr */}
               <figure className="">
                 <div className="h-[200px] scale-50">
-                  <PunkBlockie withQr={true} scale={0} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+                  <PunkBlockie withQr={true} scale={0} address={contractDetails?.contractAddress as string} />
                 </div>
               </figure>
 
               <div className="items-center text-center card-body n--red ">
                 <div className="card-title n-balance-lg  xl:mt-4">
-                  <Balance price={1000} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+                  <Balance price={1000} address={contractDetails?.contractAddress as string} />
                 </div>
-                <div className="card-title n-balance-lg  xl:mt-0">Test wallet</div>
+                <div className="card-title n-balance-lg  xl:mt-0">{contractDetails?.walletName}</div>
 
                 <div className=" text-left">
                   <div className="n-address">
-                    <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+                    <Address address={contractDetails?.contractAddress as string} />
                   </div>
-                  <div className="font-bold text-md ">4 owners</div>
-                  <div className="font-bold text-md ">4 signature required</div>
+                  <div className="font-bold text-md ">{contractDetails?.owners.length} owner</div>
+                  <div className="font-bold text-md ">{contractDetails?.signaturesRequired} signature required</div>
                 </div>
                 <div className=" items-center justify-between  w-full xl:ml-auto card-actions">
-                  <div className="font-bold text-gray-400 ">10/04/2022 10:10:10</div>
-                  <Link to={'/wallet/asasfasdf'}>
+                  <div className="font-bold text-gray-400 ">{contractDetails?.createdAt}</div>
+                  <Link to={`/wallet/${contractDetails?.contractId}`}>
                     <button className="btn btn-secondary">Open</button>
                   </Link>
                 </div>
@@ -99,4 +105,4 @@ const WalletInfoCard: React.FC<IWalletInfoCard> = ({ isManageWalletScreen }) => 
     </>
   );
 };
-export default WalletInfoCard;
+export default React.memo(WalletInfoCard);

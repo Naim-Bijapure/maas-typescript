@@ -8,7 +8,7 @@ import { parseEther } from '@ethersproject/units';
 import { Tooltip } from 'antd';
 import { transactor, TTransactorFunc } from 'eth-components/functions';
 import { BigNumberish } from 'ethers';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import WalletInfoCard from '../common/WalletInfoCard';
 
@@ -16,6 +16,7 @@ import WalletCreateModal from './components/WalleCreateModal';
 
 import API from '~~/config/API';
 import { ethComponentsSettings } from '~~/config/app.config';
+import { IContractData } from '~~/models/Types';
 import { useStore } from '~~/store/useStore';
 
 // interface IContractList {
@@ -25,9 +26,19 @@ import { useStore } from '~~/store/useStore';
 
 const Index: React.FC<any> = () => {
   const [state, dispatch] = useStore();
+  console.log('state: ', state);
   const [openModal, setOpenModal] = useState(false);
 
   const tempArr = [1, 2, 3, 4, 5];
+
+  const fetchAllContracts = async (): Promise<void> => {
+    // send contract data to server
+    const { ethersAppContext } = state;
+    const response = await API.get(`/contractList/${ethersAppContext?.account}`);
+    const contracts = response.data['allContracts'];
+    console.log('contracts: ', contracts);
+    dispatch({ payload: { contracts } });
+  };
 
   const onWalletCreate = async (
     walletName: string,
@@ -54,7 +65,7 @@ const Index: React.FC<any> = () => {
 
     const contractData = { ...createEvent.args };
 
-    const reqData = {
+    const reqData: IContractData = {
       walletName,
       account: contractData['creator'],
       contractAddress: contractData['contractAddress'],
@@ -66,10 +77,16 @@ const Index: React.FC<any> = () => {
 
     // send contract data to server
     const response = await API.post('/createContract', reqData);
-    console.log('response: ', response);
+    console.log('response: ', response.data);
+    // fetch updated contract list
+    await fetchAllContracts();
 
     setOpenModal(false);
   };
+
+  useEffect(() => {
+    void fetchAllContracts();
+  }, [state.ethersAppContext?.account]);
 
   return (
     <div className="m-5">
@@ -90,9 +107,20 @@ const Index: React.FC<any> = () => {
         </div>
       </div>
       <div className="flex flex-wrap justify-around xl:justify-start">
-        {tempArr.map((index) => {
-          return <>{<WalletInfoCard isManageWalletScreen={true} />}</>;
-        })}
+        {state.contracts?.length !== 0 &&
+          state.contracts?.map((data) => {
+            return (
+              <>
+                {
+                  <WalletInfoCard
+                    key={data['contractId']}
+                    contractId={data['contractId']}
+                    isManageWalletScreen={true}
+                  />
+                }
+              </>
+            );
+          })}
       </div>
     </div>
   );
