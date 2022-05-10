@@ -9,6 +9,7 @@ import { BrowserRouter, Switch } from 'react-router-dom';
 
 import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
+import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
 import Wallet from './views/Wallet';
 
@@ -77,15 +78,15 @@ export const MainPage: FC = () => {
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
 
   // keep track of a variable from the contract in the local React state:
-  const [purpose, update] = useContractReader(
-    yourContract,
-    yourContract?.purpose,
-    [],
-    yourContract?.filters.SetPurpose()
-  );
+  // const [purpose, update] = useContractReader(
+  //   yourContract,
+  //   yourContract?.purpose,
+  //   [],
+  //   yourContract?.filters.SetPurpose()
+  // );
 
   // 📟 Listen for broadcast events
-  const [setPurposeEvents] = useEventListener(yourContract, 'SetPurpose', 0);
+  // const [setPurposeEvents] = useEventListener(yourContract, 'SetPurpose', 0);
 
   // -----------------------------
   // .... 🎇 End of examples
@@ -101,6 +102,16 @@ export const MainPage: FC = () => {
     setRoute(window.location.pathname);
   }, [setRoute]);
 
+  const multiSigFactory = useAppContracts('MultiSigFactory', ethersAppContext.chainId);
+
+  // -----------------
+  //  add required data on global state
+  // -----------------
+  const [state, dipatch] = useStore();
+  useEffect(() => {
+    dipatch({ payload: { ethersAppContext, scaffoldAppProviders, ethPrice, multiSigFactory } });
+  }, [ethersAppContext.account, ethPrice]);
+
   // -----------------------------
   // 📃 Page List
   // -----------------------------
@@ -110,7 +121,8 @@ export const MainPage: FC = () => {
       name: 'manageWallets',
       content: (
         <>
-          <ManageWallets scaffoldAppProviders={scaffoldAppProviders} />
+          {/* <ManageWallets scaffoldAppProviders={scaffoldAppProviders} account={ethersAppContext.account as string} /> */}
+          <ManageWallets />
         </>
       ),
     },

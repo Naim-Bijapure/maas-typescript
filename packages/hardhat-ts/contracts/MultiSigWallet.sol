@@ -152,4 +152,9 @@ contract MultiSigWallet {
   receive() external payable {
     emit Deposit(msg.sender, msg.value, address(this).balance);
   }
+
+  // to get total owner count
+  function getTotalOwners() public view returns (uint256) {
+    return owners.length;
+  }
 }

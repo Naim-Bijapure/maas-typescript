@@ -1,12 +1,10 @@
-import {
-  InfoCircleOutlined as InfoIcon,
-  ArrowRightOutlined as ArrowRightIcon,
-  PlusCircleOutlined as AddProposalIcon,
-} from '@ant-design/icons';
+import { InfoCircleOutlined as InfoIcon, ArrowRightOutlined as ArrowRightIcon } from '@ant-design/icons';
 import { Descriptions, Tabs } from 'antd';
-import { Address, Balance, Blockie, PunkBlockie } from 'eth-components/ant';
+import { Address, Balance, Blockie } from 'eth-components/ant';
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
+
+import WalletInfoCard from '../common/WalletInfoCard';
 const { TabPane } = Tabs;
 
 const ProposalInfoModal: React.FC = () => {
@@ -185,56 +183,57 @@ function callback(key: any): void {
   console.log(key);
 }
 
-const WalletInfo: React.FC<any> = () => {
-  return (
-    <div className="xl:flex ">
-      <div className="flex w-full mt-2 shadow-2xl card bg-base-100 xl:card-side glass ">
-        {/* qr */}
-        <figure className="">
-          <div className="h-[200px] scale-50 xl:scale-75 xl:h-full ">
-            <PunkBlockie withQr={true} scale={0} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-          </div>
-        </figure>
+// const WalletInfoCard: React.FC<any> = () => {
+//   return (
+//     <div className="xl:flex ">
+//       <div className="flex w-full mt-2 shadow-2xl card bg-base-100 xl:card-side glass ">
+//         {/* qr */}
+//         <figure className="">
+//           <div className="h-[200px] scale-50 xl:scale-75 xl:h-full ">
+//             <PunkBlockie withQr={true} scale={0} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+//           </div>
+//         </figure>
 
-        <div className="items-center text-center card-body n--red xl:items-start xl:justify-between">
-          <div className="card-title n-balance-lg  xl:mt-4">
-            <Balance price={1000} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-          </div>
-          <div className="mr-auto text-left">
-            <div className="n-address">
-              <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-            </div>
-            <div className="font-bold text-md ">4 owners</div>
-            <div className="font-bold text-md ">4 signature required</div>
-          </div>
-          <div className="card-actions xl:mb-4">
-            <button className="btn btn-secondary">
-              <span className="mx-2">Add Proposal</span>
-              <AddProposalIcon className="" style={{ fontSize: '20px', marginBottom: '3px' }} />
-            </button>
-          </div>
-        </div>
-      </div>
-      <div className="w-full mt-4 shadow-2xl card bg-base-300 xl:mx-5 xl:mt-2 xl:w-[30%]">
-        <div className="card-body">
-          <h2 className="card-title">Owners</h2>
+//         <div className="items-center text-center card-body n--red xl:items-start xl:justify-between">
+//           <div className="card-title n-balance-lg  xl:mt-4">
+//             <Balance price={1000} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+//           </div>
+//           <div className="mr-auto text-left">
+//             <div className="n-address">
+//               <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+//             </div>
+//             <div className="font-bold text-md ">4 owners</div>
+//             <div className="font-bold text-md ">4 signature required</div>
+//           </div>
+//           <div className="card-actions xl:mb-4">
+//             <button className="btn btn-secondary">
+//               <span className="mx-2">Add Proposal</span>
+//               <AddProposalIcon className="" style={{ fontSize: '20px', marginBottom: '3px' }} />
+//             </button>
+//           </div>
+//         </div>
+//       </div>
 
-          <div className="n-address">
-            <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-          </div>
+//       <div className="w-full mt-4 shadow-2xl card bg-base-300 xl:mx-5 xl:mt-2 xl:w-[30%]">
+//         <div className="card-body">
+//           <h2 className="card-title">Owners</h2>
 
-          <div className="n-address">
-            <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-          </div>
+//           <div className="n-address">
+//             <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+//           </div>
 
-          <div className="n-address">
-            <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
+//           <div className="n-address">
+//             <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+//           </div>
+
+//           <div className="n-address">
+//             <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
 
 const Index: React.FC = () => {
   const params = useParams();
@@ -243,7 +242,7 @@ const Index: React.FC = () => {
     <div className="m-5">
       <Tabs defaultActiveKey="1" centered onChange={callback} size={'large'} type="card">
         <TabPane tab="Wallet" key="1">
-          <WalletInfo />
+          <WalletInfoCard isManageWalletScreen={false} />
         </TabPane>
         <TabPane tab="Transcaction pool" key="2">
           <div className="flex flex-col items-center justify-center ">

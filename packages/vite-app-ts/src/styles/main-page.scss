@@ -31,3 +31,10 @@
 .n-blue {
   border: 1px solid blue;
 }
+
+/*your selectors if needed*/
+.ant-modal-content,
+.ant-modal-header {
+  border-radius: 20px;
+  /* background: red; */
+}

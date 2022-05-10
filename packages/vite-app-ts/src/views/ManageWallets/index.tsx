@@ -1,70 +1,105 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { AppstoreAddOutlined as AddWalletIcon } from '@ant-design/icons';
+import { TransactionResponse } from '@ethersproject/abstract-provider';
+import { parseEther } from '@ethersproject/units';
 import { Tooltip } from 'antd';
-import { PunkBlockie, Address, Balance } from 'eth-components/ant';
-import { useEthersAppContext } from 'eth-hooks/context';
-import React, { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { transactor, TTransactorFunc } from 'eth-components/functions';
+import { BigNumberish } from 'ethers';
+import React, { useState } from 'react';
 
-import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
+import WalletInfoCard from '../common/WalletInfoCard';
 
-interface IContractList {
-  scaffoldAppProviders: IScaffoldAppProviders;
-}
+import WalletCreateModal from './components/WalleCreateModal';
 
-const wallet: ReactNode = (
-  <>
-    <div className="flex w-full mt-5 shadow-2xl card bg-base-300  glass xl:w-[30%] sm:w-[100%] ">
-      {/* qr */}
-      <figure className="">
-        <div className="h-[200px] scale-50">
-          <PunkBlockie withQr={true} scale={0} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-        </div>
-      </figure>
+import API from '~~/config/API';
+import { ethComponentsSettings } from '~~/config/app.config';
+import { useStore } from '~~/store/useStore';
 
-      <div className="items-center text-center card-body n--red ">
-        <div className="card-title n-balance-lg  xl:mt-4">
-          <Balance price={1000} address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-        </div>
-        <div className="card-title n-balance-lg  xl:mt-0">Test wallet</div>
+// interface IContractList {
+// scaffoldAppProviders: IScaffoldAppProviders;
+// account: string;
+// }
 
-        <div className=" text-left">
-          <div className="n-address">
-            <Address address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1" />
-          </div>
-          <div className="font-bold text-md ">4 owners</div>
-          <div className="font-bold text-md ">4 signature required</div>
-        </div>
-        <div className=" items-center justify-between  w-full xl:ml-auto card-actions">
-          <div className="font-bold text-gray-400 ">10/04/2022 10:10:10</div>
-          <Link to={'/wallet/asasfasdf'}>
-            <button className="btn btn-secondary">Open</button>
-          </Link>
-        </div>
-      </div>
-    </div>
-  </>
-);
-const Index: React.FC<IContractList> = ({ scaffoldAppProviders }) => {
-  const ethersAppContext = useEthersAppContext();
-  const tempArr = [1, 2, 3, 4, 5, 6];
+const Index: React.FC<any> = () => {
+  const [state, dispatch] = useStore();
+  const [openModal, setOpenModal] = useState(false);
+
+  const tempArr = [1, 2, 3, 4, 5];
+
+  const onWalletCreate = async (
+    walletName: string,
+    addressList: Array<string>,
+    signatureCount: number,
+    fundAmount: string = '0'
+  ): Promise<any> => {
+    const { ethersAppContext, multiSigFactory } = state;
+
+    const notifyTx = transactor(ethComponentsSettings, ethersAppContext?.signer) as TTransactorFunc;
+
+    const value = parseEther(parseFloat(fundAmount).toFixed(12));
+
+    const createMultiSigTx = multiSigFactory?.create(
+      ethersAppContext?.chainId as BigNumberish,
+      addressList,
+      signatureCount,
+      { value: value }
+    );
+    const tx = (await notifyTx(createMultiSigTx)) as TransactionResponse;
+    const rcpt: any = await tx.wait();
+
+    const createEvent = rcpt.events.find((data: any) => data.event === 'Create');
+
+    const contractData = { ...createEvent.args };
+
+    const reqData = {
+      walletName,
+      account: contractData['creator'],
+      contractAddress: contractData['contractAddress'],
+      contractId: contractData['contractId'].toNumber(),
+      owners: contractData['owners'],
+      signaturesRequired: contractData['signaturesRequired'].toNumber(),
+      contractFundAmt: value.toString(),
+    };
+
+    // send contract data to server
+    const response = await API.post('/createContract', reqData);
+    console.log('response: ', response);
+
+    setOpenModal(false);
+  };
+
   return (
     <div className="m-5">
+      <WalletCreateModal
+        openModal={openModal}
+        price={state.ethPrice as number}
+        provider={state.ethersAppContext?.provider}
+        currentAccount={state.ethersAppContext?.account as string}
+        onSubmit={onWalletCreate}
+        onClose={(): void => setOpenModal(false)}
+      />
       <div className="flex  items-center justify-around xl:flex xl:flex-row xl:justify-between ">
         <div className="text-3xl font-bold  xl:text-5xl ">Your wallets</div>
         <div>
           <Tooltip title="Create wallet" placement="bottom">
-            <AddWalletIcon className="text-4xl xl:mr-4" />
+            <AddWalletIcon className="text-4xl xl:mr-4" onClick={(): void => setOpenModal(true)} />
           </Tooltip>
         </div>
-        {/* <button className="btn btn-primary w-[30%] ">
-        </button> */}
       </div>
-      <div className="flex flex-wrap justify-between">
+      <div className="flex flex-wrap justify-around xl:justify-start">
         {tempArr.map((index) => {
-          return <>{wallet}</>;
+          return <>{<WalletInfoCard isManageWalletScreen={true} />}</>;
         })}
       </div>
     </div>
   );
 };
-export default Index;
+
+// to memoize the component
+// const checkProps = (preProps: IContractList, nextProps: IContractList): boolean => {
+//   return nextProps.account === preProps.account;
+// };
+export default React.memo(Index);

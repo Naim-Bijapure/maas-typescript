@@ -51,10 +51,12 @@ contract MultiSigFactory {
     returns (
       address multiSigAddress,
       uint256 signaturesRequired,
+      uint256 totalOwners,
       uint256 balance
     )
   {
     MultiSigWallet multiSig = multiSigs[_index];
-    return (address(multiSig), multiSig.signaturesRequired(), address(multiSig).balance);
+
+    return (address(multiSig), multiSig.signaturesRequired(), multiSig.getTotalOwners(), address(multiSig).balance);
   }
 }

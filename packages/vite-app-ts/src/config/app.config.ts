@@ -1,6 +1,7 @@
 import { StaticJsonRpcProvider } from '@ethersproject/providers';
 import { NETWORKS } from '@scaffold-eth/common/src/constants';
 import { TNetworkNames } from '@scaffold-eth/common/src/models/TNetworkNames';
+import { IEthComponentsSettings } from 'eth-components/models';
 import { TNetworkInfo, TEthersProvider } from 'eth-hooks/models';
 import { invariant } from 'ts-invariant';
 
@@ -98,3 +99,12 @@ export const LOCAL_PROVIDER: TEthersProvider | undefined =
   TARGET_NETWORK_INFO === NETWORKS.localhost && import.meta.env.DEV
     ? new StaticJsonRpcProvider(NETWORKS.localhost.url)
     : undefined;
+
+// create eth components context for options and API keys
+
+export const BLOCKNATIVE_DAPPID = import.meta.env.VITE_KEY_BLOCKNATIVE_DAPPID;
+export const ethComponentsSettings: IEthComponentsSettings = {
+  apiKeys: {
+    BlocknativeDappId: BLOCKNATIVE_DAPPID,
+  },
+};

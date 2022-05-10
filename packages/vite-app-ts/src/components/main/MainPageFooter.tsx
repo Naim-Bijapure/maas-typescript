@@ -35,7 +35,9 @@ export const MainPageFooter: FC<IMainPageFooterProps> = (props) => {
         textAlign: 'left',
         left: 0,
         bottom: 20,
-        padding: 10,
+        padding: 20,
+        border: '1px solid red',
+        background: 'red',
       }}>
       <Row align="middle" gutter={[4, 4]}>
         <Col span={8}>
@@ -106,7 +108,7 @@ export const MainPageFooter: FC<IMainPageFooterProps> = (props) => {
   return (
     <>
       {left}
-      {right}
+      {/* {right} */}
     </>
   );
 };

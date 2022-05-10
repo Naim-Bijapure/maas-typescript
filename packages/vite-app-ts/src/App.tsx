@@ -6,6 +6,7 @@ import { ThemeSwitcherProvider } from 'react-css-theme-switcher';
 
 import { ErrorBoundary, ErrorFallback } from '~~/components/common/ErrorFallback';
 import { ContractsAppContext } from '~~/components/contractContext';
+import StoreProvider from './store/StoreProvider';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -36,6 +37,7 @@ const themes = {
 };
 
 // create eth components context for options and API keys
+
 const ethComponentsSettings: IEthComponentsSettings = {
   apiKeys: {
     BlocknativeDappId: BLOCKNATIVE_DAPPID,
@@ -64,7 +66,9 @@ const App: FC = () => {
               {/* <ThemeSwitcherProvider themeMap={themes} defaultTheme={savedTheme || 'light'}> */}
               <ThemeSwitcherProvider themeMap={themes} defaultTheme={savedTheme || 'dark'}>
                 <Suspense fallback={<div />}>
-                  <MainPage />
+                  <StoreProvider>
+                    <MainPage />
+                  </StoreProvider>
                 </Suspense>
               </ThemeSwitcherProvider>
             </ErrorBoundary>
