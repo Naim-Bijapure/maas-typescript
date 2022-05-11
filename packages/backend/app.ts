@@ -101,6 +101,79 @@ app.get("/api/contract/:contractId", async (req, res) => {
     return res.json({ contractData });
 });
 
+// ---------------------
+// To  add a proposal
+// ---------------------
+app.post("/api/proposalAdd", async (req, res) => {
+    let { contractId, proposalData } = req.body;
+
+    // let contractData = contractsData.find((contractData) => contractData.contractId === Number(contractId));
+    let updatedContractData = contractsData.map((data) => {
+        if (data.contractId === contractId) {
+            data.proposals.push({ ...proposalData, createdAt: moment().format("DD-MM-YY HH:MM:ss") });
+            // createdAt: moment().format("DD-MM-YY HH:MM:ss")
+        }
+        return data;
+    });
+
+    console.log("proposal added for this contractId => ", contractId);
+    contractsData = [...updatedContractData];
+
+    return res.json({ updatedContractData });
+});
+
+// ---------------------
+// To  add proposal sign
+// ---------------------
+app.post("/api/proposal/signAdd", async (req, res) => {
+    let { contractId, proposalId, sign, owner, discardSign } = req.body;
+
+    let updatedContractData = contractsData.map((data) => {
+        if (data.contractId === contractId) {
+            let updatedProposals = data.proposals.map((data) => {
+                if (data.proposalId === proposalId) {
+                    data.signatures.push({ sign, owner });
+                    data.discardSignatures.push({ sign: discardSign, owner });
+                }
+                return data;
+            });
+            data.proposals = [...updatedProposals];
+        }
+        return data;
+    });
+
+    console.log("signature added for this contractId and proposal id => ", contractId, proposalId);
+    contractsData = [...updatedContractData];
+
+    return res.json({ contractsData });
+});
+
+// ---------------------
+// update executed transcaction
+// ---------------------
+app.post("/api/proposal/execute", async (req, res) => {
+    let { contractId, proposalId, isDiscard } = req.body;
+
+    let updatedContractData = contractsData.map((data) => {
+        if (data.contractId === contractId) {
+            let updatedProposals = data.proposals.map((data) => {
+                if (data.proposalId === proposalId) {
+                    data.isExecuted = true;
+                    data.isDiscarded = isDiscard;
+                }
+                return data;
+            });
+            data.proposals = [...updatedProposals];
+        }
+        return data;
+    });
+
+    console.log("signature added for this contractId and proposal id => ", contractId, proposalId);
+    contractsData = [...updatedContractData];
+
+    return res.json({ contractsData });
+});
+
 app.listen(port, "0.0.0.0", () => {
     console.log(` application is running on port ${port}.`);
 });

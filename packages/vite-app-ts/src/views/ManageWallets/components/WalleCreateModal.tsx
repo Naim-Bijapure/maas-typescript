@@ -25,8 +25,6 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
   const [fundAmount, setFundAmount] = useState<string>('0');
   const [walletName, setWalletName] = useState<string>('');
 
-  console.log('WalletCreateModal: ');
-
   const onAddAddress = (): any => {
     if (currentAddress.includes('eth') || currentAddress.length === 42) {
       const list = new Set([...addressList, currentAddress]);

@@ -278,6 +278,8 @@ export const DAI_ABI = [
     type: 'function',
   },
 ];
+export const asyncDelay = async (duration: number): Promise<boolean> =>
+  new Promise((resolve, reject) => setTimeout(() => resolve(true), duration));
 
 // export const BASE_URL = 'http://13.234.177.68:8899/api';
 export const BASE_URL = 'http://localhost:4000/api';

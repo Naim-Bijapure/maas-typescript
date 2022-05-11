@@ -103,13 +103,14 @@ export const MainPage: FC = () => {
   }, [setRoute]);
 
   const multiSigFactory = useAppContracts('MultiSigFactory', ethersAppContext.chainId);
+  const multiSigWallet = useAppContracts('MultiSigWallet', ethersAppContext.chainId);
 
   // -----------------
   //  add required data on global state
   // -----------------
   const [state, dipatch] = useStore();
   useEffect(() => {
-    dipatch({ payload: { ethersAppContext, scaffoldAppProviders, ethPrice, multiSigFactory } });
+    dipatch({ payload: { ethersAppContext, scaffoldAppProviders, ethPrice, multiSigFactory, multiSigWallet } });
   }, [ethersAppContext.account, ethPrice]);
 
   // -----------------------------

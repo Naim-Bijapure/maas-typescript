@@ -18,6 +18,7 @@ import API from '~~/config/API';
 import { ethComponentsSettings } from '~~/config/app.config';
 import { IContractData } from '~~/models/Types';
 import { useStore } from '~~/store/useStore';
+import { fetchContracts } from '~~/services/BackendService';
 
 // interface IContractList {
 // scaffoldAppProviders: IScaffoldAppProviders;
@@ -26,17 +27,11 @@ import { useStore } from '~~/store/useStore';
 
 const Index: React.FC<any> = () => {
   const [state, dispatch] = useStore();
-  console.log('state: ', state);
   const [openModal, setOpenModal] = useState(false);
 
-  const tempArr = [1, 2, 3, 4, 5];
-
   const fetchAllContracts = async (): Promise<void> => {
-    // send contract data to server
     const { ethersAppContext } = state;
-    const response = await API.get(`/contractList/${ethersAppContext?.account}`);
-    const contracts = response.data['allContracts'];
-    console.log('contracts: ', contracts);
+    const contracts = await fetchContracts(ethersAppContext?.account as string);
     dispatch({ payload: { contracts } });
   };
 
@@ -110,15 +105,7 @@ const Index: React.FC<any> = () => {
         {state.contracts?.length !== 0 &&
           state.contracts?.map((data) => {
             return (
-              <>
-                {
-                  <WalletInfoCard
-                    key={data['contractId']}
-                    contractId={data['contractId']}
-                    isManageWalletScreen={true}
-                  />
-                }
-              </>
+              <>{<WalletInfoCard key={data['contractId']} contractDetails={data} isManageWalletScreen={true} />}</>
             );
           })}
       </div>

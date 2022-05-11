@@ -1,18 +1,7 @@
-import { IEthersContext } from 'eth-hooks/models';
 import React, { createContext, useReducer } from 'react';
-import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
-import { MultiSigFactory } from '~~/generated/contract-types';
-import { IContractData } from '~~/models/Types';
-// import Reducer from './Reducer'
 
-interface IStoreState {
-  ethersAppContext?: IEthersContext;
-  scaffoldAppProviders?: IScaffoldAppProviders;
-  ethPrice?: number;
-  multiSigFactory?: MultiSigFactory;
-  contracts?: IContractData[];
-}
-type dispatch = React.Dispatch<{ payload: any }>;
+import { dispatch, IStoreState } from '~~/models/Types';
+// import Reducer from './Reducer'
 
 export type TypeStoreState = [IStoreState, dispatch];
 
