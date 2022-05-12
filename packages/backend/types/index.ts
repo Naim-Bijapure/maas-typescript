@@ -29,4 +29,5 @@ export interface IProposal {
     isExecuted: boolean;
     isDiscarded: boolean;
     createdAt?: string;
+    updatedOwnerList: string[];
 }

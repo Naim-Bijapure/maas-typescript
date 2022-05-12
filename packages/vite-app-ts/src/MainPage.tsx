@@ -1,14 +1,13 @@
 import '~~/styles/main-page.scss';
 import { NETWORKS } from '@scaffold-eth/common/src/constants';
-import { useContractReader, useBalance, useEthersAdaptorFromProviderOrSigners, useEventListener } from 'eth-hooks';
+import { useBalance, useEthersAdaptorFromProviderOrSigners } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList, MainPageFooter } from './components/main';
-import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
+import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
 import Wallet from './views/Wallet';
@@ -66,7 +65,7 @@ export const MainPage: FC = () => {
   // 🎉 Console logs & More hook examples:
   // 🚦 disable this hook to stop console logs
   // 🏹🏹🏹 go here to see how to use hooks!
-  useScaffoldHooksExamples(scaffoldAppProviders);
+  // useScaffoldHooksExamples(scaffoldAppProviders);
 
   // -----------------------------
   // These are the contracts!
@@ -77,20 +76,6 @@ export const MainPage: FC = () => {
   // const yourNFT = useAppContracts('YourNFT', ethersAppContext.chainId);
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
 
-  // keep track of a variable from the contract in the local React state:
-  // const [purpose, update] = useContractReader(
-  //   yourContract,
-  //   yourContract?.purpose,
-  //   [],
-  //   yourContract?.filters.SetPurpose()
-  // );
-
-  // 📟 Listen for broadcast events
-  // const [setPurposeEvents] = useEventListener(yourContract, 'SetPurpose', 0);
-
-  // -----------------------------
-  // .... 🎇 End of examples
-  // -----------------------------
   // 💵 This hook will get the price of ETH from 🦄 Uniswap:
   const [ethPrice] = useDexEthPrice(scaffoldAppProviders.mainnetAdaptor?.provider, scaffoldAppProviders.targetNetwork);
 
@@ -113,6 +98,22 @@ export const MainPage: FC = () => {
     dipatch({ payload: { ethersAppContext, scaffoldAppProviders, ethPrice, multiSigFactory, multiSigWallet } });
   }, [ethersAppContext.account, ethPrice]);
 
+  // -----------------
+  //   page reload on metamask account and network change
+  // -----------------
+  useEffect(() => {
+    window.ethereum.on('accountsChanged', function () {
+      console.log('ACCOUNT CHANGED RELOAD PAGE !!!!');
+      window.location.reload();
+    });
+    // detect Network account change
+    window.ethereum.on('networkChanged', function () {
+      console.log('NETWORK CHANGED RELOAD PAGE !!!!');
+
+      window.location.reload();
+    });
+  }, []);
+
   // -----------------------------
   // 📃 Page List
   // -----------------------------
@@ -123,7 +124,7 @@ export const MainPage: FC = () => {
       content: (
         <>
           {/* <ManageWallets scaffoldAppProviders={scaffoldAppProviders} account={ethersAppContext.account as string} /> */}
-          <ManageWallets />
+          <ManageWallets key={ethersAppContext.account} />
         </>
       ),
     },
@@ -132,7 +133,7 @@ export const MainPage: FC = () => {
         name: 'wallet/:walletId',
         content: (
           <>
-            <Wallet />
+            <Wallet key={ethersAppContext.account} />
           </>
         ),
       },
@@ -141,7 +142,7 @@ export const MainPage: FC = () => {
   const { tabContents, tabMenu } = createPagesAndTabs(pageList, route, setRoute);
 
   return (
-    <div className="App">
+    <div className="App" key={ethersAppContext.account}>
       <MainPageHeader scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
       {/* Routes should be added between the <Switch> </Switch> as seen below */}
       <BrowserRouter>

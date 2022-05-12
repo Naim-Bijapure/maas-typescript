@@ -2,36 +2,34 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { AppstoreAddOutlined as AddWalletIcon } from '@ant-design/icons';
+import { AppstoreAddOutlined as AddWalletIcon, LoadingOutlined } from '@ant-design/icons';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { parseEther } from '@ethersproject/units';
-import { Tooltip } from 'antd';
+import { Spin, Tooltip } from 'antd';
 import { transactor, TTransactorFunc } from 'eth-components/functions';
 import { BigNumberish } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
-import WalletInfoCard from '../common/WalletInfoCard';
-
-import WalletCreateModal from './components/WalleCreateModal';
-
 import API from '~~/config/API';
 import { ethComponentsSettings } from '~~/config/app.config';
 import { IContractData } from '~~/models/Types';
-import { useStore } from '~~/store/useStore';
 import { fetchContracts } from '~~/services/BackendService';
+import { useStore } from '~~/store/useStore';
+import WalletInfoCard from '../common/WalletInfoCard';
+import WalletCreateModal from './components/WalleCreateModal';
 
-// interface IContractList {
-// scaffoldAppProviders: IScaffoldAppProviders;
-// account: string;
-// }
+const SpinIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
 
 const Index: React.FC<any> = () => {
   const [state, dispatch] = useStore();
+
   const [openModal, setOpenModal] = useState(false);
 
   const fetchAllContracts = async (): Promise<void> => {
     const { ethersAppContext } = state;
     const contracts = await fetchContracts(ethersAppContext?.account as string);
+
+    console.log('fetchAllContracts: ', contracts);
     dispatch({ payload: { contracts } });
   };
 
@@ -72,7 +70,7 @@ const Index: React.FC<any> = () => {
 
     // send contract data to server
     const response = await API.post('/createContract', reqData);
-    console.log('response: ', response.data);
+
     // fetch updated contract list
     await fetchAllContracts();
 
@@ -84,32 +82,38 @@ const Index: React.FC<any> = () => {
   }, [state.ethersAppContext?.account]);
 
   return (
-    <div className="m-5">
-      <WalletCreateModal
-        openModal={openModal}
-        price={state.ethPrice as number}
-        provider={state.ethersAppContext?.provider}
-        currentAccount={state.ethersAppContext?.account as string}
-        onSubmit={onWalletCreate}
-        onClose={(): void => setOpenModal(false)}
-      />
-      <div className="flex  items-center justify-around xl:flex xl:flex-row xl:justify-between ">
-        <div className="text-3xl font-bold  xl:text-5xl ">Your wallets</div>
-        <div>
-          <Tooltip title="Create wallet" placement="bottom">
-            <AddWalletIcon className="text-4xl xl:mr-4" onClick={(): void => setOpenModal(true)} />
-          </Tooltip>
+    <>
+      <Spin spinning={state.multiSigWallet === undefined && state.ethersAppContext?.active} indicator={SpinIcon}>
+        <div className={state.ethersAppContext?.active ? 'm-5' : 'hidden'}>
+          <WalletCreateModal
+            openModal={openModal}
+            price={state.ethPrice as number}
+            provider={state.ethersAppContext?.provider}
+            currentAccount={state.ethersAppContext?.account as string}
+            onSubmit={onWalletCreate}
+            onClose={(): void => setOpenModal(false)}
+          />
+          <div className="flex  items-center justify-around xl:flex xl:flex-row xl:justify-between ">
+            <div className="text-3xl font-bold  xl:text-5xl ">Your wallets</div>
+            <div>
+              <Tooltip title="Create wallet" placement="bottom">
+                <AddWalletIcon className="text-4xl xl:mr-4" onClick={(): void => setOpenModal(true)} />
+              </Tooltip>
+            </div>
+          </div>
+          <div className="flex flex-wrap justify-around xl:justify-start">
+            {state.contracts?.length !== 0 &&
+              state.contracts?.map((data) => {
+                return (
+                  <>{<WalletInfoCard key={data['contractId']} contractDetails={data} isManageWalletScreen={true} />}</>
+                );
+              })}
+          </div>
         </div>
-      </div>
-      <div className="flex flex-wrap justify-around xl:justify-start">
-        {state.contracts?.length !== 0 &&
-          state.contracts?.map((data) => {
-            return (
-              <>{<WalletInfoCard key={data['contractId']} contractDetails={data} isManageWalletScreen={true} />}</>
-            );
-          })}
-      </div>
-    </div>
+
+        {!state.ethersAppContext?.active && <div>please connect</div>}
+      </Spin>
+    </>
   );
 };
 

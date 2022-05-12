@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { LogoutOutlined as LogoutIcon, LoginOutlined as LoginIcon } from '@ant-design/icons';
 import { getNetwork, Networkish } from '@ethersproject/networks';
 import { Address, Balance, Blockie } from 'eth-components/ant';
@@ -109,6 +110,49 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
       </div>
     </>
   );
+
+  const onChangeNetwork = async (): Promise<void> => {
+    console.log('onChangeNetwork: ');
+    const ethereum = window.ethereum;
+    const data = [
+      {
+        chainId: '0x' + props.scaffoldAppProviders?.targetNetwork.chainId.toString(16),
+        chainName: props.scaffoldAppProviders?.targetNetwork.name,
+        // nativeCurrency: props.scaffoldAppProviders?.targetNetwork.nativeCurrency,
+        rpcUrls: [props.scaffoldAppProviders?.targetNetwork.url],
+        blockExplorerUrls: [props.scaffoldAppProviders?.targetNetwork.blockExplorer],
+      },
+    ];
+    console.log('data', data);
+    let switchTx;
+    // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
+    try {
+      switchTx = await ethereum.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: data[0].chainId }],
+      });
+    } catch (switchError) {
+      // not checking specific error code, because maybe we're not using MetaMask
+      try {
+        switchTx = await ethereum.request({
+          method: 'wallet_addEthereumChain',
+          params: data,
+        });
+      } catch (addError) {
+        // handle "add" error
+      }
+    }
+
+    if (switchTx) {
+      console.log(switchTx);
+    }
+
+    return undefined;
+  };
+
+  console.log('selectedChainId: ', selectedChainId);
+
+  console.log('props.scaffoldAppProviders.targetNetwork.chainId: ', props.scaffoldAppProviders.targetNetwork.chainId);
   const WrongNetwork: ReactNode = (
     <>
       <div
@@ -133,6 +177,9 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
           <span>
             You have <b>{getNetwork(selectedChainId as Networkish)?.name}</b> selected and you need to be on{' '}
             <b>{getNetwork(props.scaffoldAppProviders.targetNetwork)?.name ?? 'UNKNOWN'}</b>.
+            <button className="btn btn-error btn-xs " onClick={async (): Promise<void> => onChangeNetwork()}>
+              switch
+            </button>
           </span>
         </div>
       </div>

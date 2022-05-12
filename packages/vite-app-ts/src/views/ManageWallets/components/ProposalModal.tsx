@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
+import { LoadingOutlined } from '@ant-design/icons';
 import { parseEther } from '@ethersproject/units';
-import { Input, InputNumber, Modal, notification, Select } from 'antd';
+import { Input, InputNumber, Modal, notification, Select, Spin } from 'antd';
 import { AddressInput, EtherInput } from 'eth-components/ant';
-import { BigNumber, BytesLike } from 'ethers';
+import { BytesLike } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
 import API from '~~/config/API';
@@ -17,6 +18,8 @@ interface IProposeTranscaction {
   onSubmit: () => void;
   onClose: (arg: any) => void;
 }
+const SpinIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
 const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSubmit, contractId }) => {
   const [state, dispatch] = useStore();
   const { ethersAppContext, ethPrice, contracts, multiSigWallet } = state;
@@ -27,7 +30,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
   const [toAddress, setToAddress] = useState<string>('');
   const [currentCallData, setCurrentCallData] = useState<any>(null);
   const [value, setValue] = useState<string>('');
-  const [newSignatureCount, setNewSignatureCount] = useState<number>(0);
+  const [newSignatureCount, setNewSignatureCount] = useState<number>(1);
   const [toggleLoading, setToggleLoading] = useState<boolean>(false);
 
   const onActionSelect = (value: string): void => {
@@ -35,7 +38,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
     setValue('');
     setToAddress('');
     setCurrentCallData(null);
-    setNewSignatureCount(0);
+    setNewSignatureCount(1);
   };
 
   const onProposalCreate = async (): Promise<void> => {
@@ -52,6 +55,16 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
 
     const walletAddress = multiSigWalletLoaded?.address;
     const date = new Date();
+    let updatedOwnerList: string[] = [...(contractDetails?.owners as string[])];
+    if (selectedAction === 'addSigner') {
+      updatedOwnerList = [...new Set([...updatedOwnerList, toAddress])];
+    }
+
+    if (selectedAction === 'removeSigner') {
+      updatedOwnerList = [...new Set([...updatedOwnerList])].filter((address) => address === toAddress);
+    }
+
+    console.log('updatedOwnerList: ', updatedOwnerList);
 
     const currentToAddress = currentCallData === '0x' ? toAddress : walletAddress;
 
@@ -80,6 +93,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
       signatures: [],
       discardSignatures: [],
       owners: contractDetails?.owners,
+      updatedOwnerList,
       isExecuted: false,
       isDiscarded: false,
     };
@@ -107,7 +121,10 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
     if (['addSigner', 'removeSigner'].includes(selectedAction)) {
       if (Boolean(toAddress) && newSignatureCount > 0) {
         // @ts-ignore
-        const callData = walletFactory?.interface.encodeFunctionData(selectedAction, [toAddress, newSignatureCount]);
+        const callData = state.multiSigWallet?.interface.encodeFunctionData(selectedAction, [
+          toAddress,
+          newSignatureCount,
+        ]);
         setCurrentCallData(callData);
       }
     }
@@ -135,9 +152,12 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
           key={selectedAction}
           className="btn btn-primary"
           onClick={async (): Promise<void> => onProposalCreate()}
-          disabled={toAddress.length === 0}
-          //   loading={toggleLoading}
-        >
+          disabled={toAddress.length === 0 || toggleLoading}>
+          <Spin
+            indicator={SpinIcon}
+            style={{ color: 'purple', marginRight: '10px' }}
+            spinning={toggleLoading}
+            key={selectedAction}></Spin>
           Submit
         </button>,
       ]}>
@@ -172,7 +192,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
         </div>
 
         <div className={`m-2 w-[70%] ${['customCall'].includes(selectedAction) ? '' : 'hidden'}`}>
-          <Input placeholder="Custom call data" onChange={(e) => setCurrentCallData(e.target.value)} />
+          <Input placeholder="Custom call data" onChange={(e): void => setCurrentCallData(e.target.value)} />
           {Boolean(currentCallData) && currentCallData?.includes('0x') === false && (
             <div className="my-1 text-red-600">custom call data is invalid</div>
           )}

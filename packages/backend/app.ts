@@ -152,10 +152,12 @@ app.post("/api/proposal/signAdd", async (req, res) => {
 // update executed transcaction
 // ---------------------
 app.post("/api/proposal/execute", async (req, res) => {
-    let { contractId, proposalId, isDiscard } = req.body;
+    let { contractId, proposalId, isDiscard, finalSignaturesCount, finalOwnerList } = req.body;
 
     let updatedContractData = contractsData.map((data) => {
         if (data.contractId === contractId) {
+            data.owners = [...finalOwnerList];
+            data.signaturesRequired = finalSignaturesCount;
             let updatedProposals = data.proposals.map((data) => {
                 if (data.proposalId === proposalId) {
                     data.isExecuted = true;

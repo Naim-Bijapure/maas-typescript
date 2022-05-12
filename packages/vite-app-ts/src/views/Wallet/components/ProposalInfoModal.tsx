@@ -1,9 +1,28 @@
 import { InfoCircleOutlined as InfoIcon } from '@ant-design/icons';
 import { Descriptions } from 'antd';
 import { Address, Balance } from 'eth-components/ant';
+import { BigNumber } from 'ethers';
 import React from 'react';
 
-const ProposalInfoModal: React.FC = () => {
+import { IProposal } from '~~/models/Types';
+import { useStore } from '~~/store/useStore';
+
+interface IProposalInfoModal {
+  proposalData: IProposal;
+  price: number;
+}
+const ProposalInfoModal: React.FC<IProposalInfoModal> = ({ proposalData, price }) => {
+  const [state] = useStore();
+
+  // get function sigature
+  const functionSignature =
+    proposalData.callData === '0x'
+      ? proposalData.callData
+      : (state.multiSigWallet?.interface.parseTransaction({
+          data: proposalData.callData,
+        }).signature as string);
+
+  console.log('functionSignature: ', functionSignature);
   return (
     <>
       <label htmlFor="infoModal" className="btn btn-ghost ">
@@ -19,71 +38,56 @@ const ProposalInfoModal: React.FC = () => {
             ✕
           </label>
 
-          <h3 className="text-lg font-bold">Transfer Eth</h3>
+          <h3 className="text-lg font-bold">{proposalData.eventName}</h3>
           <Descriptions
             title="Proposal details"
             bordered
             layout="vertical"
             column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}>
-            <Descriptions.Item label="Event Name">{'Transfer eth'}</Descriptions.Item>
-            <Descriptions.Item label="Function signature">addSigner(double,double)</Descriptions.Item>
-            <Descriptions.Item label="Sign hash">0x9444</Descriptions.Item>
+            <Descriptions.Item label="Event Name">{proposalData.eventName}</Descriptions.Item>
+            <Descriptions.Item label="Function signature">{functionSignature}</Descriptions.Item>
+            <Descriptions.Item label="Sign hash">{proposalData.hash?.slice(0, 6)}</Descriptions.Item>
             <Descriptions.Item label="From">
-              <p className="n-address">
-                <Address address={'0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'} />
+              <p className="">
+                <Address address={proposalData.from} fontSize={15} />
               </p>
             </Descriptions.Item>
             <Descriptions.Item label="To">
-              <p className="n-address">
-                <Address address={'0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'} />
+              <p className="">
+                <Address address={proposalData.to} fontSize={15} />
               </p>
             </Descriptions.Item>
-            <Descriptions.Item label="Signature required">4</Descriptions.Item>
+            <Descriptions.Item label="Signature required">{proposalData.signatureRequired}</Descriptions.Item>
             <Descriptions.Item label="Owners">
               <p>
-                {/* {data.signers.map((sign: any) => {
+                {proposalData?.owners?.map((address: any) => {
                   return (
-                    <p key={sign} className="n-addressAdjustement">
-                      <Address address={sign} />
+                    <p key={address} className="">
+                      <Address address={address} fontSize={15} />
                     </p>
                   );
-                })} */}
-
-                <p key={'1'} className="n-address">
-                  <Address address={'0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'} />
-                </p>
-
-                <p key={'2'} className="n-address">
-                  <Address address={'0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'} />
-                </p>
+                })}
               </p>
             </Descriptions.Item>
             <Descriptions.Item label="Signed owners">
               <p>
-                {/* {data.signatures?.map(({ owner, sign }: any, index: number) => {
+                {proposalData.signatures?.map(({ owner, sign }: any, index: number) => {
                   return (
-                    <p key={owner} className="n-addressAdjustement">
-                      <Address address={'0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'} />
+                    <p key={owner} className="">
+                      <Address address={owner} fontSize={15} />
                     </p>
                   );
-                })} */}
-
-                <p key={'1'} className="n-address">
-                  <Address address={'0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'} />
-                </p>
-
-                <p key={'2'} className="n-address">
-                  <Address address={'0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'} />
-                </p>
+                })}
               </p>
             </Descriptions.Item>
 
             <Descriptions.Item label="Value">
-              <p className="n-balance">
+              <p className="">
                 <Balance
-                  address="0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1"
-                  // balance={'1000'}
-                  // dollarMultiplier={'1000'}
+                  fontSize={15}
+                  address=""
+                  balance={BigNumber.from(proposalData['value'] as string)}
+                  dollarMultiplier={price}
                 />
               </p>
             </Descriptions.Item>

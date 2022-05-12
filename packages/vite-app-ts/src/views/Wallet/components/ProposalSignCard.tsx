@@ -67,7 +67,7 @@ const ProposalSignCard: React.FC<IProposalSignCard> = ({
               </span>
               <span>{proposalData.eventName}</span>
             </div>
-            <ProposalInfoModal />
+            <ProposalInfoModal price={price} proposalData={proposalData} />
           </h2>
           {/* content */}
 
