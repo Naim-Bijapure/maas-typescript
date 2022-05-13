@@ -28,7 +28,7 @@
       "tasks/*": ["./tasks/*"]
     }
   },
-  "include": ["types", "scripts", "test", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts", "generated/contract-types"],
+  "include": ["types", "scripts", "test", "helpers", "./hardhat.config.ts", "deploy", "tasks", "scripts", "generated/contract-types", "generated/-01_deploy_your_NFT.ts", "generated/-00_deploy_your_contract.ts"],
   "exclude": ["**/node_modules"],
   "ts-node": {
     "compilerOptions": {

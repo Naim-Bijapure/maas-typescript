@@ -13,6 +13,7 @@ import React, { useEffect, useState } from 'react';
 // import MyIcon from '../../eth_icon.svg?component';
 import AlertModal from '../common/AlertModal';
 import WalletInfoCard from '../common/WalletInfoCard';
+
 import WalletCreateModal from './components/WalleCreateModal';
 
 // @ts-ignore
@@ -98,7 +99,7 @@ const Index: React.FC<any> = () => {
   return (
     <>
       <Spin spinning={state.multiSigWallet === undefined && state.ethersAppContext?.active} indicator={SpinIcon}>
-        <div className={state.ethersAppContext?.active ? 'm-5' : 'hidden'}>
+        <div className={state.ethersAppContext?.active ? ' m-5' : ' hidden'}>
           {/* wallet modal */}
           <WalletCreateModal
             openModal={openModal}
@@ -130,7 +131,7 @@ const Index: React.FC<any> = () => {
 
           {/* if no contracts found  */}
           {state.contracts?.length === 0 && (
-            <div className="flex flex-col items-center justify-center  mt-[50%] xl:mt-[10%] ">
+            <div className="flex flex-col items-center justify-center mt-[50%]">
               <div>
                 <FileOutlined className="text-9xl" />
               </div>

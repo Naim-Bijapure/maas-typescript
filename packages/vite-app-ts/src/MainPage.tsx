@@ -140,17 +140,19 @@ export const MainPage: FC = () => {
   const { tabContents, tabMenu } = createPagesAndTabs(pageList, route, setRoute);
 
   return (
-    <div className="h-screen App" key={ethersAppContext.account}>
-      <MainPageHeader scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
-      {/* Routes should be added between the <Switch> </Switch> as seen below */}
-      <BrowserRouter>
-        {/* {tabMenu} */}
-        <Switch>{tabContents}</Switch>
-      </BrowserRouter>
-      {/* <MainPageFooter scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} /> */}
-      <div style={{ position: 'absolute' }}>{notificationHolder}</div>
+    <>
+      <div className="App " key={ethersAppContext.account}>
+        <MainPageHeader scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
+        {/* Routes should be added between the <Switch> </Switch> as seen below */}
+        <BrowserRouter>
+          {/* {tabMenu} */}
+          <Switch>{tabContents}</Switch>
+        </BrowserRouter>
+        {/* <MainPageFooter scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} /> */}
+        <div style={{ position: 'absolute' }}>{notificationHolder}</div>
+      </div>
 
       {ethersAppContext.account && <Foooter />}
-    </div>
+    </>
   );
 };

@@ -15,7 +15,7 @@ invariant.log('MODE', import.meta.env.MODE, import.meta.env.DEV);
  * This constant is your target network that the app is pointed at
  * 🤚🏽  Set your target frontend network <--- select your target frontend network(localhost, rinkeby, xdai, mainnet)
  */
-const TARGET_NETWORK = 'localhost';
+const TARGET_NETWORK = import.meta.env.VITE_APP_TARGET_NETWORK;
 
 const cachedNetwork = window.localStorage.getItem('network') || TARGET_NETWORK;
 // console.log('cachedNetwork: ', cachedNetwork);
