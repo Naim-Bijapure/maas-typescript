@@ -283,8 +283,8 @@ export const DAI_ABI = [
 export const asyncDelay = async (duration: number): Promise<boolean> =>
   new Promise((resolve, reject) => setTimeout(() => resolve(true), duration));
 
-export const BASE_URL = 'http://13.234.177.68:8891/api';
-// export const BASE_URL = 'http://localhost:4000/api';
+// export const BASE_URL = 'http://13.234.177.68:8891/api';
+export const BASE_URL = 'http://localhost:4000/api';
 
 export const proposalEventNameMap: Record<string, string> = {
   addSigner: 'Add a new signer',

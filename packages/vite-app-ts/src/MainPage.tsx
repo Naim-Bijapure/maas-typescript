@@ -7,7 +7,7 @@ import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
+import { MainPageHeader, createPagesAndTabs, TContractPageList, MainPageFooter } from './components/main';
 import Foooter from './components/main/Footer';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
@@ -148,11 +148,12 @@ export const MainPage: FC = () => {
           {/* {tabMenu} */}
           <Switch>{tabContents}</Switch>
         </BrowserRouter>
-        {/* <MainPageFooter scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} /> */}
         <div style={{ position: 'absolute' }}>{notificationHolder}</div>
       </div>
 
       {ethersAppContext.account && <Foooter />}
+
+      {/* <MainPageFooter scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} /> */}
     </>
   );
 };

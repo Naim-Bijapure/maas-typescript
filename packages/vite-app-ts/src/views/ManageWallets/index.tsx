@@ -131,7 +131,7 @@ const Index: React.FC<any> = () => {
 
           {/* if no contracts found  */}
           {state.contracts?.length === 0 && (
-            <div className="flex flex-col items-center justify-center mt-[50%]">
+            <div className="flex flex-col items-center justify-center mt-[50%] xl:mt-[10%]">
               <div>
                 <FileOutlined className="text-9xl" />
               </div>
@@ -142,7 +142,7 @@ const Index: React.FC<any> = () => {
 
         {/* default icon when no metamask connected */}
         {!state.ethersAppContext?.active && (
-          <div className="flex justify-center  mt-[50%] xl:mt-[10%]">
+          <div className="flex justify-center  mt-[10%] xl:mt-[10%]">
             <EthIcon />
           </div>
         )}
