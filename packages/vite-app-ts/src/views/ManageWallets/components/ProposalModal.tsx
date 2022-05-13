@@ -131,12 +131,13 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
   return (
     <Modal
       title="Create new proposal"
+      closable={false}
       visible={openModal}
       // onOk={onSubmit}
-      onCancel={onClose}
+      // onCancel={onClose}
       // footer action buttons
       footer={[
-        <button key="back" onClick={onClose} className="mx-4 btn btn-ghost">
+        <button key="back" onClick={onClose} className="mx-4 btn btn-ghost" disabled={toggleLoading}>
           Return
         </button>,
         <button
@@ -148,7 +149,8 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
             indicator={SpinIcon}
             style={{ color: 'purple', marginRight: '10px' }}
             spinning={toggleLoading}
-            key={selectedAction}></Spin>
+            key={selectedAction}
+          />
           Submit
         </button>,
       ]}>

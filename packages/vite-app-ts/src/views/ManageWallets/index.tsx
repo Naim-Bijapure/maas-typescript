@@ -121,10 +121,8 @@ const Index: React.FC<any> = () => {
           {/* display contract list */}
           {state.contracts?.length !== 0 && (
             <div className="flex flex-wrap justify-around xl:justify-start">
-              {state.contracts?.map((data) => {
-                return (
-                  <>{<WalletInfoCard key={data['contractId']} contractDetails={data} isManageWalletScreen={true} />}</>
-                );
+              {state.contracts?.map((data, index) => {
+                return <>{<WalletInfoCard key={index} contractDetails={data} isManageWalletScreen={true} />}</>;
               })}
             </div>
           )}

@@ -26,11 +26,11 @@ export const appContractsConfig = () => {
       // --------------------------------------------------
       // 🙋🏽‍♂️ Add your hadrdhat contracts here
       // --------------------------------------------------
-      YourContract: createConnectorForHardhatContract(
-        'YourContract',
-        hardhatContracts.YourContract__factory,
-        hardhatContractsJson
-      ),
+      // YourContract: createConnectorForHardhatContract(
+      //   'YourContract',
+      //   hardhatContracts.YourContract__factory,
+      //   hardhatContractsJson
+      // ),
 
       MultiSigFactory: createConnectorForHardhatContract(
         'MultiSigFactory',

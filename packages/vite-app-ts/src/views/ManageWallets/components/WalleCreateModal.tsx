@@ -1,11 +1,19 @@
-import { DeleteFilled, PlusCircleTwoTone as AddIcon } from '@ant-design/icons';
-import { Modal, InputNumber, Input } from 'antd';
+/* eslint-disable @typescript-eslint/no-misused-promises */
+import { DeleteFilled, LoadingOutlined, PlusCircleTwoTone as AddIcon } from '@ant-design/icons';
+import { Modal, InputNumber, Input, Spin } from 'antd';
 import { Address, AddressInput, EtherInput } from 'eth-components/ant';
 import React, { useEffect, useState } from 'react';
 
+const SpinIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
 interface IWalletCreateModal {
   openModal: boolean;
-  onSubmit: (walletName: string, addressList: Array<string>, signatureCount: number, fundAmount: string) => void;
+  onSubmit: (
+    walletName: string,
+    addressList: Array<string>,
+    signatureCount: number,
+    fundAmount: string
+  ) => Promise<void>;
   onClose: (arg: any) => void;
   provider: any;
   price: number;
@@ -24,6 +32,7 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
   const [signatureCount, setSignatureCount] = useState<number | null>(null);
   const [fundAmount, setFundAmount] = useState<string>('0');
   const [walletName, setWalletName] = useState<string>('');
+  const [toggleLoading, setToggleLoading] = useState<boolean>(false);
 
   const addMultipleAddress = (value: string): void => {
     // add basic validation a address should contains 0x with length of 42 chars
@@ -64,6 +73,12 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
     setAddress(currentAccount);
   }, []);
 
+  const onCreateContract = async (): Promise<void> => {
+    setToggleLoading(true);
+    await onSubmit(walletName, addressList, signatureCount as number, fundAmount);
+    setToggleLoading(false);
+  };
+
   return (
     <div>
       <Modal
@@ -71,16 +86,24 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
         visible={openModal}
         // onOk={onSubmit}
         onCancel={onClose}
+        closable={false}
+        maskClosable={false}
         footer={[
-          <button key="back" className="mx-5 btn btn-ghost" onClick={onClose}>
+          <button key="back" className="mx-5 btn btn-ghost" onClick={onClose} disabled={toggleLoading}>
             Return
           </button>,
           <button
             className="btn btn-primary"
             key={'submit'}
             //     type="primary"
-            onClick={(): void => onSubmit(walletName, addressList, signatureCount as number, fundAmount)}
-            disabled={addressList.length === 0 || signatureCount === null}>
+            onClick={async (): Promise<void> => onCreateContract()}
+            disabled={addressList.length === 0 || signatureCount === null }>
+            <Spin
+              indicator={SpinIcon}
+              style={{ color: 'purple', marginRight: '10px' }}
+              spinning={toggleLoading}
+              key={'createWallet'}
+            />
             Submit
           </button>,
         ]}>

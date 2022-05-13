@@ -73,7 +73,7 @@ export const MainPage: FC = () => {
   // -----------------------------
 
   // init contracts
-  const yourContract = useAppContracts('YourContract', ethersAppContext.chainId);
+  // const yourContract = useAppContracts('YourContract', ethersAppContext.chainId);
   // const yourNFT = useAppContracts('YourNFT', ethersAppContext.chainId);
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
 

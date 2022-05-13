@@ -5,6 +5,7 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
   const { getNamedAccounts, deployments } = hre;
   const { deploy } = deployments;
   const { deployer } = await getNamedAccounts();
+  console.log('deployer: ', deployer);
   const CHAIN_ID = 31337;
 
   const multiSigFactoryDeployed = await deploy('MultiSigFactory', {

@@ -36,7 +36,7 @@ export const NETWORKS: Readonly<Record<TNetworkNames, TNetworkInfo>> = {
         name: "rinkeby",
         color: "#e0d068",
         chainId: 4,
-        url: `https://rinkeby.infura.io/v3/${INFURA_ID}`,
+        url: `https://rinkeby.infura.io/v3/d7d49f3bcbd943b6bceb4a7549cd1bb0`,
         faucet: "https://faucet.rinkeby.io/",
         blockExplorer: "https://rinkeby.etherscan.io/",
     },
