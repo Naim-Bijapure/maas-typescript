@@ -7,7 +7,7 @@ import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
+import { MainPageHeader, createPagesAndTabs, TContractPageList, MainPageFooter } from './components/main';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
 import Wallet from './views/Wallet';
@@ -95,6 +95,7 @@ export const MainPage: FC = () => {
   // -----------------
   const [state, dipatch] = useStore();
   useEffect(() => {
+    console.log('ethersAppContext: ', ethersAppContext);
     dipatch({ payload: { ethersAppContext, scaffoldAppProviders, ethPrice, multiSigFactory, multiSigWallet } });
   }, [ethersAppContext.account, ethPrice]);
 
@@ -102,12 +103,12 @@ export const MainPage: FC = () => {
   //   page reload on metamask account and network change
   // -----------------
   useEffect(() => {
-    window.ethereum.on('accountsChanged', function () {
+    window.ethereum?.on('accountsChanged', function () {
       console.log('ACCOUNT CHANGED RELOAD PAGE !!!!');
       window.location.reload();
     });
     // detect Network account change
-    window.ethereum.on('networkChanged', function () {
+    window.ethereum?.on('networkChanged', function () {
       console.log('NETWORK CHANGED RELOAD PAGE !!!!');
 
       window.location.reload();

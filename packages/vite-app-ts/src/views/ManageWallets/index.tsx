@@ -2,21 +2,31 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { AppstoreAddOutlined as AddWalletIcon, LoadingOutlined } from '@ant-design/icons';
+import { AppstoreAddOutlined as AddWalletIcon, FileOutlined, LoadingOutlined } from '@ant-design/icons';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { parseEther } from '@ethersproject/units';
+import { NETWORKS } from '@scaffold-eth/common/src/constants';
+import { TNetworkNames } from '@scaffold-eth/common/src/models/TNetworkNames';
 import { Spin, Tooltip } from 'antd';
 import { transactor, TTransactorFunc } from 'eth-components/functions';
 import { BigNumberish } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
+// import MyIcon from '../../eth_icon.svg?component';
+import WalletInfoCard from '../common/WalletInfoCard';
+
+import WalletCreateModal from './components/WalleCreateModal';
+
+// @ts-ignore
+import EthIcon from '~~/assets/eth_icon.svg?component';
 import API from '~~/config/API';
-import { ethComponentsSettings } from '~~/config/app.config';
+import { ethComponentsSettings, TARGET_NETWORK_INFO } from '~~/config/app.config';
 import { IContractData } from '~~/models/Types';
 import { fetchContracts } from '~~/services/BackendService';
 import { useStore } from '~~/store/useStore';
-import WalletInfoCard from '../common/WalletInfoCard';
-import WalletCreateModal from './components/WalleCreateModal';
+
+// /home/naim/Docker_Env/Node/Web3/maas-typescript/packages/vite-app-ts/src/eth_icon.svg
+// packages/vite-app-ts/src/eth_icon.svg
 
 const SpinIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
 
@@ -101,17 +111,34 @@ const Index: React.FC<any> = () => {
               </Tooltip>
             </div>
           </div>
-          <div className="flex flex-wrap justify-around xl:justify-start">
-            {state.contracts?.length !== 0 &&
-              state.contracts?.map((data) => {
-                return (
-                  <>{<WalletInfoCard key={data['contractId']} contractDetails={data} isManageWalletScreen={true} />}</>
-                );
-              })}
-          </div>
+          {state.contracts?.length !== 0 && (
+            <div className="flex flex-wrap justify-around xl:justify-start">
+              {state.contracts?.length !== 0 &&
+                state.contracts?.map((data) => {
+                  return (
+                    <>
+                      {<WalletInfoCard key={data['contractId']} contractDetails={data} isManageWalletScreen={true} />}
+                    </>
+                  );
+                })}
+            </div>
+          )}
+
+          {state.contracts?.length === 0 && (
+            <div className="flex flex-col items-center justify-center  mt-[50%] xl:mt-[10%] ">
+              <div>
+                <FileOutlined className="text-9xl" />
+              </div>
+              <span className="m-2 text-2xl font-bold text-primary">No wallets found</span>
+            </div>
+          )}
         </div>
 
-        {!state.ethersAppContext?.active && <div>please connect</div>}
+        {!state.ethersAppContext?.active && (
+          <div className="flex justify-center  mt-[50%] xl:mt-[10%]">
+            <EthIcon />
+          </div>
+        )}
       </Spin>
     </>
   );

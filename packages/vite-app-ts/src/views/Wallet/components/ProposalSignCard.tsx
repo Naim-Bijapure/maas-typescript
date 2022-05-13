@@ -143,6 +143,7 @@ const ProposalSignCard: React.FC<IProposalSignCard> = ({
                 )}
                 <input
                   type="checkbox"
+                  disabled={signCheck}
                   checked={signCheck}
                   onChange={(): any => null}
                   onClick={onSign}

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { LogoutOutlined as LogoutIcon, LoginOutlined as LoginIcon } from '@ant-design/icons';
 import { getNetwork, Networkish } from '@ethersproject/networks';
+import { NETWORKS } from '@scaffold-eth/common/src/constants';
+import { TNetworkNames } from '@scaffold-eth/common/src/models/TNetworkNames';
 import { Address, Balance, Blockie } from 'eth-components/ant';
 import { useGasPrice } from 'eth-hooks';
 import {
@@ -11,10 +13,11 @@ import {
   UserClosedModalError,
   TEthersModalConnector,
 } from 'eth-hooks/context';
-import React, { FC, ReactNode, useCallback } from 'react';
+import React, { FC, ReactNode, useCallback, useEffect, useState } from 'react';
 
 import { useAntNotification } from '~~/components/main/hooks/useAntNotification';
 import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
+import { TARGET_NETWORK_INFO } from '~~/config/app.config';
 import { getNetworkInfo } from '~~/functions';
 
 // displays a page header
@@ -101,7 +104,7 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
         <div className="mx-3 text-3xl">
           <LoginIcon
             onClick={(): void => {
-              // console.log('ethersAppContext.active: ', ethersAppContext.active);
+              //
               const connector = props.scaffoldAppProviders.createLoginConnector?.();
               ethersAppContext.openModal(connector as TEthersModalConnector, onLoginError);
             }}
@@ -111,8 +114,7 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
     </>
   );
 
-  const onChangeNetwork = async (): Promise<void> => {
-    console.log('onChangeNetwork: ');
+  const onSwitchNetwork = async (): Promise<void> => {
     const ethereum = window.ethereum;
     const data = [
       {
@@ -123,7 +125,7 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
         blockExplorerUrls: [props.scaffoldAppProviders?.targetNetwork.blockExplorer],
       },
     ];
-    console.log('data', data);
+
     let switchTx;
     // https://docs.metamask.io/guide/rpc-api.html#other-rpc-methods
     try {
@@ -144,15 +146,11 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
     }
 
     if (switchTx) {
-      console.log(switchTx);
     }
 
     return undefined;
   };
 
-  console.log('selectedChainId: ', selectedChainId);
-
-  console.log('props.scaffoldAppProviders.targetNetwork.chainId: ', props.scaffoldAppProviders.targetNetwork.chainId);
   const WrongNetwork: ReactNode = (
     <>
       <div
@@ -177,7 +175,7 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
           <span>
             You have <b>{getNetwork(selectedChainId as Networkish)?.name}</b> selected and you need to be on{' '}
             <b>{getNetwork(props.scaffoldAppProviders.targetNetwork)?.name ?? 'UNKNOWN'}</b>.
-            <button className="btn btn-error btn-xs " onClick={async (): Promise<void> => onChangeNetwork()}>
+            <button className="btn btn-error btn-xs " onClick={async (): Promise<void> => onSwitchNetwork()}>
               switch
             </button>
           </span>
@@ -186,13 +184,44 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
     </>
   );
 
+  const [selectedNetwork, setSelectedNetwork] = useState('');
+
+  const targetNetwork = TARGET_NETWORK_INFO;
+  const onChangeNetwork = (event: React.ChangeEvent<HTMLSelectElement>): void => {
+    const value = event.target.value as TNetworkNames;
+    setSelectedNetwork(value);
+    if (targetNetwork.chainId !== NETWORKS[value].chainId) {
+      window.localStorage.setItem('network', value);
+      setTimeout(() => {
+        window.location.reload();
+      }, 1);
+    }
+  };
+
+  useEffect(() => {
+    setSelectedNetwork(targetNetwork.name);
+  }, []);
+
   return (
     <>
-      <div className="shadow-md navbar bg-base-100">
+      <div className="flex justify-end shadow-md navbar bg-base-100 ">
         <div className="flex-1">
           <a className="text-xl normal-case btn btn-ghost" href="/">
             Maas-X
           </a>
+        </div>
+
+        <div className="w-[40%] xl:w-[10%] xl:mr-10 ">
+          <select
+            className="w-full max-w-xs select select-secondary"
+            onChange={onChangeNetwork}
+            value={selectedNetwork}>
+            <option disabled>Select Network</option>
+            {/* {options} */}
+            {Object.keys(NETWORKS).map((networkName, index) => {
+              return <option key={index}>{networkName}</option>;
+            })}
+          </select>
         </div>
         {ProfileSection}
         {Login}

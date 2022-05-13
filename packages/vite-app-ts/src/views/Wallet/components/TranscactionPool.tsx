@@ -180,7 +180,7 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
         <div className="w-full  xl:w-[50%] ">
           {executableProposal && (
             <ProposalSignCard
-              account={contractDetails.account}
+              account={state.ethersAppContext?.account as string}
               proposalData={executableProposal}
               price={price}
               onExecuteTranscaction={onExecuteTranscaction}
@@ -221,11 +221,15 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
                 data.signatureRequired !== data.signatures.length &&
                 data.owners?.includes(state.ethersAppContext?.account as string)
             )
+
+            .sort((dataA, dataB) => dataB.proposalId - dataA.proposalId)
             ?.map((data) => {
               return (
                 <div key={data.proposalId} className="w-full mt-2 xl:w-[40%] xl:m-2">
                   <ProposalSignCard
-                    account={contractDetails.account}
+                    // account={contractDetails.account}
+
+                    account={state.ethersAppContext?.account as string}
                     onSignTranscaction={onSignTranscaction}
                     price={price}
                     proposalData={data}

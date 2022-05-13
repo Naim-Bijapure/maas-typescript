@@ -29,7 +29,6 @@ const Index: React.FC = () => {
     return async (): Promise<void> => {
       const { ethersAppContext } = state;
       const contracts = await fetchContracts(ethersAppContext?.account as string);
-      console.log('updateContractList: ', contracts);
 
       dispatch({ payload: { contracts } });
 

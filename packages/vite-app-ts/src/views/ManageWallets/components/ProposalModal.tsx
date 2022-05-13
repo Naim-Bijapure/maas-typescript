@@ -24,13 +24,12 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
   const [state, dispatch] = useStore();
   const { ethersAppContext, ethPrice, contracts, multiSigWallet } = state;
   const contractDetails = contracts?.find((data) => Number(data['contractId']) === Number(contractId));
-  console.log('contractDetails: ', contractDetails);
 
   const [selectedAction, setSelectedAction] = useState<string>('');
   const [toAddress, setToAddress] = useState<string>('');
   const [currentCallData, setCurrentCallData] = useState<any>(null);
   const [value, setValue] = useState<string>('');
-  const [newSignatureCount, setNewSignatureCount] = useState<number>(1);
+  const [newSignatureCount, setNewSignatureCount] = useState<number | undefined>(undefined);
   const [toggleLoading, setToggleLoading] = useState<boolean>(false);
 
   const onActionSelect = (value: string): void => {
@@ -38,7 +37,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
     setValue('');
     setToAddress('');
     setCurrentCallData(null);
-    setNewSignatureCount(1);
+    setNewSignatureCount(contractDetails?.signaturesRequired);
   };
 
   const onProposalCreate = async (): Promise<void> => {
@@ -55,16 +54,15 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
 
     const walletAddress = multiSigWalletLoaded?.address;
     const date = new Date();
+
     let updatedOwnerList: string[] = [...(contractDetails?.owners as string[])];
     if (selectedAction === 'addSigner') {
       updatedOwnerList = [...new Set([...updatedOwnerList, toAddress])];
     }
 
     if (selectedAction === 'removeSigner') {
-      updatedOwnerList = [...new Set([...updatedOwnerList])].filter((address) => address === toAddress);
+      updatedOwnerList = [...updatedOwnerList].filter((address) => address !== toAddress);
     }
-
-    console.log('updatedOwnerList: ', updatedOwnerList);
 
     const currentToAddress = currentCallData === '0x' ? toAddress : walletAddress;
 
@@ -86,7 +84,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
       to: currentToAddress,
       callData: currentCallData,
       value: etherValue.toString(),
-      newSignatureCount,
+      newSignatureCount: newSignatureCount as number,
       hash,
       discardHash,
       signatureRequired: signatureRequired?.toNumber(),
@@ -104,7 +102,6 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
     };
 
     const addProposalResponse = await API.post(`/proposalAdd`, reqData);
-    console.log('addProposalResponse: ', addProposalResponse.data);
 
     notification['success']({ message: 'Proposal created' });
     onSubmit();
@@ -119,24 +116,21 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
     }
 
     if (['addSigner', 'removeSigner'].includes(selectedAction)) {
-      if (Boolean(toAddress) && newSignatureCount > 0) {
+      if (Boolean(toAddress) && (newSignatureCount as number) > 0) {
         // @ts-ignore
         const callData = state.multiSigWallet?.interface.encodeFunctionData(selectedAction, [
           toAddress,
           newSignatureCount,
         ]);
+
         setCurrentCallData(callData);
       }
     }
   }, [selectedAction, newSignatureCount]);
 
-  useEffect(() => {
-    console.log('useEffect: proposal modal load ');
-
-    return () => {
-      console.log('useEffect: proposal modal  UN LOAD ');
-    };
-  }, []);
+  // useEffect(() => {
+  //   return () => {};
+  // }, []);
 
   return (
     <Modal
@@ -152,7 +146,8 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
           key={selectedAction}
           className="btn btn-primary"
           onClick={async (): Promise<void> => onProposalCreate()}
-          disabled={toAddress.length === 0 || toggleLoading}>
+          // disabled={toAddress.length === 0 || toggleLoading}
+        >
           <Spin
             indicator={SpinIcon}
             style={{ color: 'purple', marginRight: '10px' }}
@@ -213,7 +208,8 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
           <InputNumber
             style={{ width: '100%' }}
             placeholder="New # of signer required"
-            min={1}
+            value={newSignatureCount}
+            // min={1}
             onChange={setNewSignatureCount}
           />
         </div>

@@ -21,6 +21,7 @@ const ExecutedPool: React.FC<IExecutedPool> = ({ contractDetails, price }) => {
       <div className="flex flex-wrap justify-center ">
         {proposals
           .filter((data) => data.isExecuted === true)
+          .sort((dataA, dataB) => dataB.proposalId - dataA.proposalId)
           ?.map((data) => {
             return (
               <div key={data.proposalId} className="w-full mt-4 xl:w-[40%] xl:m-4 ">
