@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { PlusCircleOutlined as AddProposalIcon } from '@ant-design/icons';
 import { PunkBlockie, Balance, Address } from 'eth-components/ant';
 import React, { useState } from 'react';
@@ -9,16 +10,16 @@ import { IContractData } from '~~/models/Types';
 
 interface IWalletInfoCard {
   isManageWalletScreen: boolean;
-  // contractId: number;
   contractDetails: IContractData;
   updateContractList?: () => Promise<void>;
 }
-const WalletInfoCard: React.FC<IWalletInfoCard> = ({ isManageWalletScreen, contractDetails, updateContractList: fetchAllContract }) => {
+const WalletInfoCard: React.FC<IWalletInfoCard> = ({
+  isManageWalletScreen,
+  contractDetails,
+  updateContractList: fetchAllContract,
+}) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [onDelayClose, setOnDelayClose] = useState<boolean>(false);
-  // const [state, dispatch] = useStore();
-  // const contractDetails = state.contracts?.find((data) => Number(data['contractId']) === Number(contractId));
-  // console.log('contractDetails: ', contractDetails);
 
   const onOpen = (): void => {
     setOnDelayClose(true);
@@ -26,7 +27,8 @@ const WalletInfoCard: React.FC<IWalletInfoCard> = ({ isManageWalletScreen, contr
   };
   const onClose = async (): Promise<void> => {
     setOpenModal(false);
-    // TO  UNMOUNT MODAL WITH TRANSITION CLOSE ANIMATION
+
+    // To  unmount modal with transition close animation
     setTimeout(() => {
       setOnDelayClose(false);
     }, 100);

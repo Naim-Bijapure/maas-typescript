@@ -25,10 +25,28 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
   const [fundAmount, setFundAmount] = useState<string>('0');
   const [walletName, setWalletName] = useState<string>('');
 
+  const addMultipleAddress = (value: string): void => {
+    // add basic validation a address should contains 0x with length of 42 chars
+    const validateAddress = (address: string): any =>
+      address.includes('0x') || address.length === 42 || address.includes('eth');
+
+    const addresses = value.trim().split(',');
+    let uniqueAddresses = [...new Set([...addresses])];
+
+    uniqueAddresses = uniqueAddresses.filter(validateAddress);
+
+    const finalUniqueAddresses = [...new Set([...addressList.filter(validateAddress), ...uniqueAddresses])];
+    setAddressList(finalUniqueAddresses);
+  };
+
   const onAddAddress = (): any => {
-    if (currentAddress.includes('eth') || currentAddress.length === 42) {
+    if (currentAddress.length === 42) {
       const list = new Set([...addressList, currentAddress]);
       setAddressList([...list]);
+      setAddress('');
+    } else {
+      // on multiple address inputs
+      addMultipleAddress(currentAddress);
       setAddress('');
     }
   };
@@ -92,7 +110,7 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
           {addressList.map((address: string) => {
             return (
               <div key={address} className="flex justify-center items--center">
-                <Address address={address} />
+                <Address address={address} fontSize={20} />
                 <DeleteFilled
                   className="text-xl"
                   color="red"
@@ -115,7 +133,4 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
   );
 };
 
-// const checkProps = (preProps: IWalletCreateModal, nextProps: IWalletCreateModal): boolean => {
-//   return preProps.openModal !== nextProps.openModal;
-// };
 export default React.memo(WalletCreateModal);

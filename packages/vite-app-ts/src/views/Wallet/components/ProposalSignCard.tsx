@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import ProposalInfoModal from './ProposalInfoModal';
 
 import { IProposal } from '~~/models/Types';
+import { proposalEventNameMap } from '~~/models/constants/constants';
 
 interface IProposalSignCard {
   isExecutable?: boolean;
@@ -26,19 +27,20 @@ const ProposalSignCard: React.FC<IProposalSignCard> = ({
   onSignTranscaction,
   onExecuteTranscaction,
 }) => {
-  //   console.log('proposalData: ', proposalData);
+  //
   const [signCheck, setSignCheck] = useState(false);
 
   const onSign = async (): Promise<void> => {
     onSignTranscaction && (await onSignTranscaction(Number(proposalData.proposalId)));
-    //     setSignCheck(true);
   };
 
   const onExecute = async (isDiscard: boolean): Promise<void> => {
     onExecuteTranscaction && (await onExecuteTranscaction(Number(proposalData.proposalId), isDiscard));
-    //     setSignCheck(true);
   };
 
+  // -----------------
+  //   update signature status of a account
+  // -----------------
   useEffect(() => {
     const findSignature = proposalData.signatures.find((data) => data.owner === account);
     if (findSignature !== undefined) {
@@ -65,7 +67,7 @@ const ProposalSignCard: React.FC<IProposalSignCard> = ({
               <span className="mx-2">
                 {'#'} {proposalData.nonce}
               </span>
-              <span>{proposalData.eventName}</span>
+              <span>{proposalEventNameMap[proposalData.eventName]}</span>
             </div>
             <ProposalInfoModal price={price} proposalData={proposalData} />
           </h2>
@@ -129,6 +131,7 @@ const ProposalSignCard: React.FC<IProposalSignCard> = ({
               </>
             )}
 
+            {/* execute actions */}
             {!isExecutable && (
               <>
                 <div className="font-bold text-gray-400 ">{proposalData.createdAt}</div>

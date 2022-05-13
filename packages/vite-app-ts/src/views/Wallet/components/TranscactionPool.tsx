@@ -1,17 +1,15 @@
 import { FileExclamationOutlined } from '@ant-design/icons';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
-import { notification, Tabs } from 'antd';
+import { notification } from 'antd';
 import { transactor } from 'eth-components/functions';
 import { BytesLike } from 'ethers';
-import React, { useCallback, useEffect, useState } from 'react';
-import { Redirect, useParams } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+
+import ProposalSignCard from './ProposalSignCard';
 
 import API from '~~/config/API';
 import { ethComponentsSettings } from '~~/config/app.config';
 import { IContractData, IProposal, IStoreState } from '~~/models/Types';
-import { fetchContracts } from '~~/services/BackendService';
-import { useStore } from '~~/store/useStore';
-import ProposalSignCard from './ProposalSignCard';
 
 interface ITranscactionPool {
   contractDetails: IContractData;
@@ -27,6 +25,9 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
 
   const proposals: IProposal[] = contractDetails.proposals as IProposal[];
 
+  // -----------------
+  //   update list for executable contract and display on main list
+  // -----------------
   const updateExecutable = async (): Promise<void> => {
     const currentMultiSigWallet = state.multiSigWallet?.attach(contractDetails.contractAddress);
     const nonce = await currentMultiSigWallet?.nonce();
@@ -59,6 +60,7 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
 
     const nextNonce = Number(selectedProposal?.proposalId) - 1;
 
+    // main hash
     const mainHash = await currentMultiSigWallet?.getTransactionHash(
       nextNonce,
       selectedProposal?.to as string,
@@ -97,6 +99,7 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
       };
       // send the transcaction
       const resSignature = await API.post(`/proposal/signAdd`, { ...reqData });
+      console.log('resSignature: ', resSignature);
 
       notification['success']({ message: 'Added signature successfully' });
       updateContractList && (await updateContractList());
@@ -106,12 +109,11 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
 
   // on execute the transcaction
   const onExecuteTranscaction = async (proposalId: number, isDiscard?: boolean): Promise<void> => {
-    console.log('proposalId: ', proposalId);
     const { multiSigWallet } = state;
     const currentMultiSigWallet = multiSigWallet?.attach(contractDetails.contractAddress);
 
     const selectedProposal = proposals.find((data) => data.proposalId === proposalId);
-    console.log('selectedProposal: ', selectedProposal);
+
     const notifyTx: any = transactor(ethComponentsSettings, state.ethersAppContext?.signer);
 
     const sign = await state.ethersAppContext?.provider?.send('personal_sign', [
@@ -119,22 +121,23 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
       state.ethersAppContext.account,
     ]);
     const recoverAddress = await currentMultiSigWallet?.recover(selectedProposal?.hash as string, sign as string);
-    console.log('recoverAddress: ', recoverAddress);
 
     const isOwner = await currentMultiSigWallet?.isOwner(recoverAddress as string);
 
     if (isOwner) {
+      // sort the required signature in order
       const signitures: any[] = (selectedProposal as IProposal).signatures
         .sort((dataA: any, dataB: any) => dataA['owner'] - dataB['owner'])
         .map((data: { owner: any; sign: string }) => data?.sign);
-      console.log('signitures: ', signitures);
 
+      // sort the discard required signature in order
       const discardSignitures: any[] = (selectedProposal as IProposal).discardSignatures
         .sort((dataA: any, dataB: any) => dataA['owner'] - dataB['owner'])
         .map((data: { owner: any; sign: string }) => data?.sign);
 
       const finalSignatures = isDiscard === false ? signitures : discardSignitures;
 
+      // prepare final values
       const to = selectedProposal?.to as string;
       const value = isDiscard === false ? (selectedProposal?.value as string) : '0';
       const callData = isDiscard === false ? (selectedProposal?.callData as string) : '0x';
@@ -160,9 +163,9 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
         finalSignaturesCount,
         finalOwnerList,
       };
-      console.log('reqData: ', reqData);
+
       const resExecute = await API.post(`/proposal/execute`, reqData);
-      console.log('resExecute: ', resExecute.data);
+      console.log('resExecute: ', resExecute);
 
       updateContractList && (await updateContractList());
       await updateExecutable();
@@ -177,6 +180,7 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
   return (
     <>
       <div className="flex flex-col items-center justify-center ">
+        {/* display current executable proposal */}
         <div className="w-full  xl:w-[50%] ">
           {executableProposal && (
             <ProposalSignCard
@@ -188,11 +192,14 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
             />
           )}
         </div>
+
+        {/* pending proposal in que */}
         {inQueProposals > 0 && (
           <div className="mt-2 text-sm font-bold text-accent text-opacity-70">
             {inQueProposals - 1} proposals in que
           </div>
         )}
+        {/* if no proposals */}
         {inQueProposals === 0 && (
           <div className="m-5 shadow-lg xl:w-1/6 alert alert-info">
             <div>
@@ -212,6 +219,7 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
           </div>
         )}
       </div>
+      {/* signature pool list */}
       <div className="text-2xl font-bold divider">Sign pool</div>
       {proposals.length > 0 && (
         <div className="flex flex-wrap justify-center">
@@ -240,6 +248,7 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
             })}
         </div>
       )}
+      {/* if no data in pool */}
       {proposals.filter(
         (data) =>
           data.signatureRequired !== data.signatures.length &&

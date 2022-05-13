@@ -5,28 +5,23 @@
 import { AppstoreAddOutlined as AddWalletIcon, FileOutlined, LoadingOutlined } from '@ant-design/icons';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { parseEther } from '@ethersproject/units';
-import { NETWORKS } from '@scaffold-eth/common/src/constants';
-import { TNetworkNames } from '@scaffold-eth/common/src/models/TNetworkNames';
 import { Spin, Tooltip } from 'antd';
 import { transactor, TTransactorFunc } from 'eth-components/functions';
 import { BigNumberish } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
 // import MyIcon from '../../eth_icon.svg?component';
+import AlertModal from '../common/AlertModal';
 import WalletInfoCard from '../common/WalletInfoCard';
-
 import WalletCreateModal from './components/WalleCreateModal';
 
 // @ts-ignore
 import EthIcon from '~~/assets/eth_icon.svg?component';
 import API from '~~/config/API';
-import { ethComponentsSettings, TARGET_NETWORK_INFO } from '~~/config/app.config';
+import { ethComponentsSettings } from '~~/config/app.config';
 import { IContractData } from '~~/models/Types';
 import { fetchContracts } from '~~/services/BackendService';
 import { useStore } from '~~/store/useStore';
-
-// /home/naim/Docker_Env/Node/Web3/maas-typescript/packages/vite-app-ts/src/eth_icon.svg
-// packages/vite-app-ts/src/eth_icon.svg
 
 const SpinIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
 
@@ -34,15 +29,23 @@ const Index: React.FC<any> = () => {
   const [state, dispatch] = useStore();
 
   const [openModal, setOpenModal] = useState(false);
+  const [serverState, setServerState] = useState(true);
 
+  // -----------------
+  //    fetch all contract  on load and updaet global state
+  // -----------------
   const fetchAllContracts = async (): Promise<void> => {
     const { ethersAppContext } = state;
-    const contracts = await fetchContracts(ethersAppContext?.account as string);
-
-    console.log('fetchAllContracts: ', contracts);
-    dispatch({ payload: { contracts } });
+    try {
+      const contracts = await fetchContracts(ethersAppContext?.account as string);
+      dispatch({ payload: { contracts } });
+      setServerState(true);
+    } catch (error) {
+      setServerState(false);
+    }
   };
 
+  // on creaet wallet
   const onWalletCreate = async (
     walletName: string,
     addressList: Array<string>,
@@ -80,6 +83,7 @@ const Index: React.FC<any> = () => {
 
     // send contract data to server
     const response = await API.post('/createContract', reqData);
+    console.log('create contract response: ', response);
 
     // fetch updated contract list
     await fetchAllContracts();
@@ -95,6 +99,7 @@ const Index: React.FC<any> = () => {
     <>
       <Spin spinning={state.multiSigWallet === undefined && state.ethersAppContext?.active} indicator={SpinIcon}>
         <div className={state.ethersAppContext?.active ? 'm-5' : 'hidden'}>
+          {/* wallet modal */}
           <WalletCreateModal
             openModal={openModal}
             price={state.ethPrice as number}
@@ -111,19 +116,19 @@ const Index: React.FC<any> = () => {
               </Tooltip>
             </div>
           </div>
+
+          {/* display contract list */}
           {state.contracts?.length !== 0 && (
             <div className="flex flex-wrap justify-around xl:justify-start">
-              {state.contracts?.length !== 0 &&
-                state.contracts?.map((data) => {
-                  return (
-                    <>
-                      {<WalletInfoCard key={data['contractId']} contractDetails={data} isManageWalletScreen={true} />}
-                    </>
-                  );
-                })}
+              {state.contracts?.map((data) => {
+                return (
+                  <>{<WalletInfoCard key={data['contractId']} contractDetails={data} isManageWalletScreen={true} />}</>
+                );
+              })}
             </div>
           )}
 
+          {/* if no contracts found  */}
           {state.contracts?.length === 0 && (
             <div className="flex flex-col items-center justify-center  mt-[50%] xl:mt-[10%] ">
               <div>
@@ -134,18 +139,18 @@ const Index: React.FC<any> = () => {
           )}
         </div>
 
+        {/* default icon when no metamask connected */}
         {!state.ethersAppContext?.active && (
           <div className="flex justify-center  mt-[50%] xl:mt-[10%]">
             <EthIcon />
           </div>
         )}
+
+        {/* server down alert error */}
+        <AlertModal openModal={!serverState} />
       </Spin>
     </>
   );
 };
 
-// to memoize the component
-// const checkProps = (preProps: IContractList, nextProps: IContractList): boolean => {
-//   return nextProps.account === preProps.account;
-// };
 export default React.memo(Index);

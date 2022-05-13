@@ -47,3 +47,5 @@ export interface IProposal {
   createdAt?: string;
   updatedOwnerList: string[];
 }
+
+export type ProposalEventType = 'addSigner' | 'removeSigner' | 'transferFunds' | 'customCall';

@@ -21,7 +21,7 @@ interface IProposeTranscaction {
 const SpinIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSubmit, contractId }) => {
-  const [state, dispatch] = useStore();
+  const [state] = useStore();
   const { ethersAppContext, ethPrice, contracts, multiSigWallet } = state;
   const contractDetails = contracts?.find((data) => Number(data['contractId']) === Number(contractId));
 
@@ -48,12 +48,10 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
 
     const proposalId = Number(contractDetails?.proposals?.length) + 1;
 
-    //     const nonce = (await multiSigWalletLoaded?.nonce()) as BigNumber;
     const nonce = proposalId - 1;
     const signatureRequired = await multiSigWalletLoaded?.signaturesRequired();
 
     const walletAddress = multiSigWalletLoaded?.address;
-    const date = new Date();
 
     let updatedOwnerList: string[] = [...(contractDetails?.owners as string[])];
     if (selectedAction === 'addSigner') {
@@ -75,6 +73,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
 
     const discardHash = await multiSigWalletLoaded?.getTransactionHash(nonce, currentToAddress as string, '0', '0x');
 
+    // created a proposal data
     const proposalData: IProposal = {
       proposalId,
       nonce: nonce,
@@ -102,6 +101,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
     };
 
     const addProposalResponse = await API.post(`/proposalAdd`, reqData);
+    console.log('addProposalResponse: ', addProposalResponse);
 
     notification['success']({ message: 'Proposal created' });
     onSubmit();
@@ -128,16 +128,13 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
     }
   }, [selectedAction, newSignatureCount]);
 
-  // useEffect(() => {
-  //   return () => {};
-  // }, []);
-
   return (
     <Modal
       title="Create new proposal"
       visible={openModal}
       // onOk={onSubmit}
       onCancel={onClose}
+      // footer action buttons
       footer={[
         <button key="back" onClick={onClose} className="mx-4 btn btn-ghost">
           Return
@@ -146,8 +143,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
           key={selectedAction}
           className="btn btn-primary"
           onClick={async (): Promise<void> => onProposalCreate()}
-          // disabled={toAddress.length === 0 || toggleLoading}
-        >
+          disabled={toAddress.length === 0 || toggleLoading}>
           <Spin
             indicator={SpinIcon}
             style={{ color: 'purple', marginRight: '10px' }}
@@ -156,7 +152,6 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
           Submit
         </button>,
       ]}>
-      {/* <Button onClick={onTest}>Test</Button> */}
       <div className="flex flex-col  items-center w-full">
         {/* select action */}
         <div className="m-2 w-[70%]">
@@ -181,7 +176,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
             onChange={setToAddress}
           />
 
-          {Boolean(toAddress) && toAddress?.includes('0x') === false && toAddress.length < 42 && (
+          {Boolean(toAddress) && toAddress?.includes('0x') === false && toAddress?.includes('eth') === false && (
             <div className="my-1 text-red-600">invalid address</div>
           )}
         </div>

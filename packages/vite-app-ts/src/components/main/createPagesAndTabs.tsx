@@ -1,6 +1,7 @@
 import { Menu } from 'antd';
 import React from 'react';
 import { Link, Route } from 'react-router-dom';
+import Foooter from './Footer';
 /**
  * A name and element that represents a page
  */
@@ -74,6 +75,7 @@ export const createPagesAndTabs = (
       {pageList.pages.map(({ name, content }) => (
         <Route key={name} path={'/' + getPath(name)}>
           {content}
+          {/* <Foooter /> */}
         </Route>
       ))}
     </>

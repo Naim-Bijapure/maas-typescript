@@ -1,5 +1,7 @@
 // EXTERNAL CONTRACTS
 
+import { ProposalEventType } from '../Types';
+
 export const DAI_ADDRESS = '0x6B175474E89094C44Da98b954EedeAC495271d0F';
 
 export const DAI_ABI = [
@@ -283,3 +285,10 @@ export const asyncDelay = async (duration: number): Promise<boolean> =>
 
 // export const BASE_URL = 'http://13.234.177.68:8899/api';
 export const BASE_URL = 'http://localhost:4000/api';
+
+export const proposalEventNameMap: Record<string, string> = {
+  addSigner: 'Add a new signer',
+  removeSigner: 'Remove a signer',
+  transferFunds: 'Transfer funds',
+  customCall: 'custom call data',
+};

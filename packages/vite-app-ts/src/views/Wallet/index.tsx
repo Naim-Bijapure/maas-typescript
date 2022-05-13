@@ -4,11 +4,12 @@ import { Redirect, useParams } from 'react-router-dom';
 
 import WalletInfoCard from '../common/WalletInfoCard';
 
+import ExecutedPool from './components/ExecutedPool';
+import TranscactionPool from './components/TranscactionPool';
+
 import { IContractData } from '~~/models/Types';
 import { fetchContracts } from '~~/services/BackendService';
 import { useStore } from '~~/store/useStore';
-import ExecutedPool from './components/ExecutedPool';
-import TranscactionPool from './components/TranscactionPool';
 
 const { TabPane } = Tabs;
 
@@ -17,14 +18,16 @@ function callback(key: any): void {}
 const Index: React.FC = () => {
   const { walletId } = useParams<{ walletId: string }>();
 
-  const [time, setTime] = useState<any>();
-  const [currentAccount, seCurrentAccount] = useState<string>();
+  const [time, setTime] = useState<string>();
 
   const [state, dispatch] = useStore();
-  const { ethersAppContext, ethPrice, contracts, multiSigWallet } = state;
+  const { ethPrice, contracts } = state;
 
   const contractDetails = contracts?.find((data) => Number(data['contractId']) === Number(walletId));
 
+  // -----------------
+  //   to update contract list on page load
+  // -----------------
   const updateContractList = useCallback(() => {
     return async (): Promise<void> => {
       const { ethersAppContext } = state;
@@ -32,7 +35,8 @@ const Index: React.FC = () => {
 
       dispatch({ payload: { contracts } });
 
-      setTime(new Date().getTime());
+      const timeStamp: string = new Date().getTime().toString();
+      setTime(timeStamp);
     };
   }, [walletId])();
 
@@ -52,7 +56,7 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div className="m-5">
+    <div className="h-screen m-5">
       <Tabs defaultActiveKey="1" centered onChange={callback} size={'large'} type="card">
         <TabPane tab="Wallet" key="1">
           <WalletInfoCard

@@ -4,6 +4,7 @@ import { Address, Balance } from 'eth-components/ant';
 import { BigNumber } from 'ethers';
 import React from 'react';
 
+import { proposalEventNameMap } from '~~/models/constants/constants';
 import { IProposal } from '~~/models/Types';
 import { useStore } from '~~/store/useStore';
 
@@ -22,7 +23,6 @@ const ProposalInfoModal: React.FC<IProposalInfoModal> = ({ proposalData, price }
           data: proposalData.callData,
         }).signature as string);
 
-  console.log('functionSignature: ', functionSignature);
   return (
     <>
       <label htmlFor="infoModal" className="btn btn-ghost ">
@@ -38,7 +38,8 @@ const ProposalInfoModal: React.FC<IProposalInfoModal> = ({ proposalData, price }
             ✕
           </label>
 
-          <h3 className="text-lg font-bold">{proposalData.eventName}</h3>
+          {/* main content */}
+          <h3 className="text-lg font-bold">{proposalEventNameMap[proposalData.eventName]}</h3>
           <Descriptions
             title="Proposal details"
             bordered

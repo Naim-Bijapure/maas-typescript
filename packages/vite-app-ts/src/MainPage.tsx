@@ -7,7 +7,8 @@ import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList, MainPageFooter } from './components/main';
+import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
+import Foooter from './components/main/Footer';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
 import Wallet from './views/Wallet';
@@ -95,7 +96,6 @@ export const MainPage: FC = () => {
   // -----------------
   const [state, dipatch] = useStore();
   useEffect(() => {
-    console.log('ethersAppContext: ', ethersAppContext);
     dipatch({ payload: { ethersAppContext, scaffoldAppProviders, ethPrice, multiSigFactory, multiSigWallet } });
   }, [ethersAppContext.account, ethPrice]);
 
@@ -104,13 +104,10 @@ export const MainPage: FC = () => {
   // -----------------
   useEffect(() => {
     window.ethereum?.on('accountsChanged', function () {
-      console.log('ACCOUNT CHANGED RELOAD PAGE !!!!');
       window.location.reload();
     });
     // detect Network account change
     window.ethereum?.on('networkChanged', function () {
-      console.log('NETWORK CHANGED RELOAD PAGE !!!!');
-
       window.location.reload();
     });
   }, []);
@@ -143,7 +140,7 @@ export const MainPage: FC = () => {
   const { tabContents, tabMenu } = createPagesAndTabs(pageList, route, setRoute);
 
   return (
-    <div className="App" key={ethersAppContext.account}>
+    <div className="h-screen App" key={ethersAppContext.account}>
       <MainPageHeader scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
       {/* Routes should be added between the <Switch> </Switch> as seen below */}
       <BrowserRouter>
@@ -152,6 +149,8 @@ export const MainPage: FC = () => {
       </BrowserRouter>
       {/* <MainPageFooter scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} /> */}
       <div style={{ position: 'absolute' }}>{notificationHolder}</div>
+
+      {ethersAppContext.account && <Foooter />}
     </div>
   );
 };

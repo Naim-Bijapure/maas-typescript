@@ -1,12 +1,9 @@
 import { FileExclamationOutlined } from '@ant-design/icons';
 import React from 'react';
 
-// import WalletInfoCard from '../common/WalletInfoCard';
-
-// import ProposalSignCard from './components/ProposalSignCard';
+import ProposalSignCard from './ProposalSignCard';
 
 import { IContractData, IProposal } from '~~/models/Types';
-import ProposalSignCard from './ProposalSignCard';
 
 interface IExecutedPool {
   contractDetails: IContractData;
@@ -18,7 +15,8 @@ const ExecutedPool: React.FC<IExecutedPool> = ({ contractDetails, price }) => {
 
   return (
     <>
-      <div className="flex flex-wrap justify-center ">
+      {/* display executed proposals */}
+      <div className="flex flex-wrap justify-center  ">
         {proposals
           .filter((data) => data.isExecuted === true)
           .sort((dataA, dataB) => dataB.proposalId - dataA.proposalId)
@@ -36,9 +34,11 @@ const ExecutedPool: React.FC<IExecutedPool> = ({ contractDetails, price }) => {
               </div>
             );
           })}
+
+        {/* if no executed proposals data */}
         {proposals.filter((data) => data.isExecuted === true).length === 0 && (
           <>
-            <div className="flex flex-wrap items-center justify-center mt-[70%] md:mt-[20%]">
+            <div className=" flex flex-wrap items-center justify-center   mt-[70%] md:mt-[20%]">
               <div className=" text-5xl  ">
                 <FileExclamationOutlined />
               </div>
