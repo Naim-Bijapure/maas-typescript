@@ -17,6 +17,8 @@ let TX_DATA_LIMIT = 1000;
 app.get("/test", async (req, res) => {
 
     return res.json({ status:"server is up" });
+
+
 });
 
 
