@@ -1,6 +1,8 @@
 import express from "express";
 import cors from "cors";
 import moment from "moment";
+import http from "http";
+
 import { IContractData } from "./types";
 
 const app = express();
@@ -184,3 +186,26 @@ app.post("/api/proposal/execute", async (req, res) => {
 app.listen(port, "0.0.0.0", () => {
     console.log(` application is running on port ${port}.`);
 });
+
+// to keep alive heroku call test api every 5 minutes
+setInterval(function () {
+    const https = require("https");
+
+    const options = {
+        hostname: "maas-backend.herokuapp.com",
+        path: "/test",
+        method: "GET",
+    };
+    const req = https.request(options, (res) => {
+        console.log(`statusCode: ${res.statusCode}`);
+
+        res.on("data", (d) => {
+            process.stdout.write(d);
+        });
+    });
+    req.on("error", (error) => {
+        console.error(error);
+    });
+
+    req.end();
+}, 300000); // every 5 minutes (300000)
