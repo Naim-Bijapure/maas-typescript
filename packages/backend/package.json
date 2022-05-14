@@ -2,7 +2,9 @@
     "name": "@scaffold-eth/backend",
     "packageManager": "yarn@3.2.0",
     "scripts": {
-        "serve": "nodemon app.ts"
+        "serve": "nodemon app.ts",
+        "tsc":"tsc",
+        "start":"node build/server.js"
     },
     "devDependencies": {
         "@types/express": "^4.17.13",

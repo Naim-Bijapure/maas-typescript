@@ -13,6 +13,13 @@ let transcactionsData = [];
 let contractsData: IContractData[] = [];
 let TX_DATA_LIMIT = 1000;
 
+
+app.get("/test", async (req, res) => {
+
+    return res.json({ status:"server is up" });
+});
+
+
 app.get("/api/:tx_id", async (req, res) => {
     let { tx_id } = req.params;
 
