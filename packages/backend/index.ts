@@ -4,7 +4,7 @@ import moment from "moment";
 import { IContractData } from "./types";
 
 const app = express();
-const port = 4000;
+const port: any = Number(process.env.PORT) || 4000;
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -13,14 +13,9 @@ let transcactionsData = [];
 let contractsData: IContractData[] = [];
 let TX_DATA_LIMIT = 1000;
 
-
 app.get("/test", async (req, res) => {
-
-    return res.json({ status:"server is up" });
-
-
+    return res.json({ status: "server is up" });
 });
-
 
 app.get("/api/:tx_id", async (req, res) => {
     let { tx_id } = req.params;
@@ -68,6 +63,7 @@ app.get("/api/contractList/:account_id", async (req, res) => {
         .filter((data) => data.owners.includes(account_id))
         .sort((dataA, dataB) => dataB.contractId - dataA.contractId);
 
+    console.log("allContracts: length ", allContracts.length);
     return res.json({ allContracts });
 });
 

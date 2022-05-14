@@ -1,5 +1,7 @@
 {
     "compilerOptions": {
-        "outDir": "dist",
-    }
+        "esModuleInterop": true,
+        "outDir": "dist"
+    },
+    "include": ["**/*.ts" /* Include every ts file in source folder */]
 }
