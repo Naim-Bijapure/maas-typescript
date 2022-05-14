@@ -5,9 +5,9 @@
         "node": "16.13.2"
     },
     "scripts": {
-        "serve": "nodemon app.ts",
+        "serve": "nodemon index.ts",
         "tsc": "tsc",
-        "start": "ts-node index.ts",
+        "start": "node dist/index.js",
         "deploy": "git add . && git commit -m Heroku && git push heroku master",
         "postinstall": "tsc"
     },
