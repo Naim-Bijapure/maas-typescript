@@ -283,9 +283,6 @@ export const DAI_ABI = [
 export const asyncDelay = async (duration: number): Promise<boolean> =>
   new Promise((resolve, reject) => setTimeout(() => resolve(true), duration));
 
-// export const BASE_URL = 'https://maas-backend.herokuapp.com/api';
-export const BASE_URL = 'http://localhost:4000/api';
-
 export const proposalEventNameMap: Record<string, string> = {
   addSigner: 'Add a new signer',
   removeSigner: 'Remove a signer',
