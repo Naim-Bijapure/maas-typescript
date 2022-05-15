@@ -179,7 +179,7 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center ">
+      <div className="flex   flex-col items-center justify-center ">
         {/* display current executable proposal */}
         <div className="w-full  xl:w-[50%] ">
           {executableProposal && (
@@ -222,7 +222,7 @@ const TranscactionPool: React.FC<ITranscactionPool> = ({ contractDetails, price,
       {/* signature pool list */}
       <div className="text-2xl font-bold divider">Sign pool</div>
       {proposals.length > 0 && (
-        <div className="flex flex-wrap justify-center">
+        <div className="flex   flex-wrap justify-center">
           {proposals
             .filter(
               (data) =>

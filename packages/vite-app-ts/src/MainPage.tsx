@@ -7,7 +7,7 @@ import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList, MainPageFooter } from './components/main';
+import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
 import Foooter from './components/main/Footer';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
@@ -141,17 +141,17 @@ export const MainPage: FC = () => {
 
   return (
     <>
-      <div className="App " key={ethersAppContext.account}>
+      <div className="flex flex-col min-h-screen  App" key={ethersAppContext.account}>
         <MainPageHeader scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
-        {/* Routes should be added between the <Switch> </Switch> as seen below */}
-        <BrowserRouter>
-          {/* {tabMenu} */}
-          <Switch>{tabContents}</Switch>
-        </BrowserRouter>
-        <div style={{ position: 'absolute' }}>{notificationHolder}</div>
+        <div className="flex-grow">
+          <BrowserRouter>
+            <Switch>{tabContents}</Switch>
+          </BrowserRouter>
+        </div>
+        {ethersAppContext.account && <Foooter />}
       </div>
 
-      {ethersAppContext.account && <Foooter />}
+      <div style={{ position: 'absolute' }}>{notificationHolder}</div>
 
       {/* <MainPageFooter scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} /> */}
     </>

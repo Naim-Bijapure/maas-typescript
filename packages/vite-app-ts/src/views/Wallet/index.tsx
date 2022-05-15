@@ -56,9 +56,7 @@ const Index: React.FC = () => {
   }
 
   return (
-    <div
-      className="h-screen m-5"
-      key={String(state.ethersAppContext?.account) + String(state.ethersAppContext?.active)}>
+    <div className="m-5" key={String(state.ethersAppContext?.account) + String(state.ethersAppContext?.active)}>
       <Tabs defaultActiveKey="1" centered onChange={callback} size={'large'} type="card">
         <TabPane tab="Wallet" key="1">
           <WalletInfoCard
