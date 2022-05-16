@@ -18,6 +18,7 @@ import { useCreateAntNotificationHolder } from '~~/components/main/hooks/useAntN
 import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 import { BURNER_FALLBACK_ENABLED, MAINNET_PROVIDER } from '~~/config/app.config';
+import Web3StorageTest from './views/Web3StorageTest';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -135,6 +136,15 @@ export const MainPage: FC = () => {
           </>
         ),
       },
+
+      // {
+      //   name: 'web3Storage',
+      //   content: (
+      //     <>
+      //       <Web3StorageTest />
+      //     </>
+      //   ),
+      // },
     ],
   };
   const { tabContents, tabMenu } = createPagesAndTabs(pageList, route, setRoute);

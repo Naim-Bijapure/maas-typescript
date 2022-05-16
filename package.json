@@ -89,5 +89,9 @@
             "yarn workspace @scaffold-eth/hardhat format",
             "yarn workspace @scaffold-eth/hardhat solhint --fix"
         ]
+    },
+    "dependencies": {
+        "ipfs-http-client": "^56.0.3",
+        "web3.storage": "^4.2.0"
     }
 }
