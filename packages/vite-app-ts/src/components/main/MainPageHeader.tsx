@@ -213,7 +213,7 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
 
         <div className="w-[40%] xl:w-[10%] xl:mr-10 ">
           <select
-            className="w-full max-w-xs select select-secondary"
+            className="w-full max-w-xs select select-ghost"
             onChange={onChangeNetwork}
             value={selectedNetwork}>
             <option disabled>Select Network</option>

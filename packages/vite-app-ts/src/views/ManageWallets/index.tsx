@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-misused-promises */
+
 import { AppstoreAddOutlined as AddWalletIcon, FileOutlined, LoadingOutlined } from '@ant-design/icons';
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { parseEther } from '@ethersproject/units';
@@ -152,4 +152,9 @@ const Index: React.FC<any> = () => {
   );
 };
 
-export default React.memo(Index);
+const checkProps = (prePros: any, nextProps: any): boolean => {
+  console.log('prePros,nextProps: ', prePros, nextProps);
+  return false;
+};
+
+export default React.memo(Index, checkProps);
