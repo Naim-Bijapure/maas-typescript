@@ -31,7 +31,7 @@ const Index: React.FC = () => {
   const updateContractList = useCallback(() => {
     return async (): Promise<void> => {
       const { ethersAppContext } = state;
-      const contracts = await fetchContracts(ethersAppContext?.account as string);
+      const contracts = await fetchContracts(ethersAppContext?.account as string, ethersAppContext?.chainId as number);
 
       dispatch({ payload: { contracts } });
 

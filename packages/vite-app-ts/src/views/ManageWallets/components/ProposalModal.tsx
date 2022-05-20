@@ -77,6 +77,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
     const proposalData: IProposal = {
       proposalId,
       nonce: nonce,
+      chainId: ethersAppContext?.chainId as number,
       eventName: selectedAction,
       contractAddress: walletAddress,
       from: contractDetails?.account,

@@ -1,7 +1,7 @@
 import '~~/styles/main-page.scss';
 import { NETWORKS } from '@scaffold-eth/common/src/constants';
 import { useBalance, useEthersAdaptorFromProviderOrSigners } from 'eth-hooks';
-import { useEthersAppContext } from 'eth-hooks/context';
+import { TEthersModalConnector, useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
@@ -112,6 +112,7 @@ export const MainPage: FC = () => {
     window.ethereum?.on('networkChanged', function () {
       window.location.reload();
     });
+    console.log('states', state);
   }, []);
 
   // -----------------------------

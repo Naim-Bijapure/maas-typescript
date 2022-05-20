@@ -58,14 +58,31 @@ app.post("/api/add", async (req, res) => {
 // ---------------------
 // to list all contract data of a account
 // ---------------------
-app.get("/api/contractList/:account_id", async (req, res) => {
-    let { account_id } = req.params;
+app.get("/api/contractList/:account_id/:chainId", async (req, res) => {
+    let { account_id, chainId } = req.params;
+    console.log("chainId: ", chainId);
 
-    let allContracts = contractsData
-        .filter((data) => data.owners.includes(account_id))
-        .sort((dataA, dataB) => dataB.contractId - dataA.contractId);
+    // let allContracts: IContractData[] = contractsData
+    //     .filter((data) => data.owners.includes(account_id)) // account id filter
+    //     .filter((data) => data.proposals.filter((proposalData) => proposalData.chainId === Number(chainId))) // chain id filter
+    //     .sort((dataA, dataB) => dataB.contractId - dataA.contractId);
+
+    let allContracts = contractsData.map((contractData) => {
+        if (contractData.owners.includes(account_id)) {
+            if (contractData.proposals.length > 0) {
+                // filter the proposals with chaid id
+                let filteredProposals = contractData.proposals?.filter(
+                    (proposalData) => proposalData.chainId === Number(chainId)
+                );
+                contractData.proposals = [...filteredProposals];
+            }
+
+            return contractData;
+        }
+    });
 
     console.log("allContracts: length ", allContracts.length);
+    allContracts = [...allContracts.filter((data) => Boolean(data))];
     return res.json({ allContracts });
 });
 
@@ -75,13 +92,15 @@ app.get("/api/contractList/:account_id", async (req, res) => {
 
 app.post("/api/createContract", async (req, res) => {
     // let { contract_id } = req.params;
-    let { walletName, account, contractAddress, contractId, owners, signaturesRequired, contractFundAmt } = req.body;
+    let { walletName, chainIds, account, contractAddress, contractId, owners, signaturesRequired, contractFundAmt } =
+        req.body;
 
     // if (contractsData[account] === undefined) {
     //     contractsData[account] = [];
     // }
-    contractsData.push({
+    let createdContract = {
         walletName,
+        chainIds,
         contractAddress,
         contractId,
         account,
@@ -90,9 +109,10 @@ app.post("/api/createContract", async (req, res) => {
         contractFundAmt,
         proposals: [],
         createdAt: moment().format("DD-MM-YY HH:MM:ss"),
-    });
+    };
+    contractsData.push({ ...createdContract });
 
-    return res.json({ msg: "contract added" });
+    return res.json({ createdContract });
 });
 
 // ---------------------
@@ -187,8 +207,7 @@ app.listen(port, "0.0.0.0", () => {
     console.log(` application is running on port ${port}.`);
 });
 
-
-// to keep alive heroku call test api every 5 minutes
+// // to keep alive heroku call test api every 5 minutes
 setInterval(function () {
     const https = require("https");
 

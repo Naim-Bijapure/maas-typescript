@@ -8,6 +8,8 @@ const SpinIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 interface IWalletCreateModal {
   openModal: boolean;
+  deployWalletName?: string;
+  deployType?: string;
   onSubmit: (
     walletName: string,
     addressList: Array<string>,
@@ -21,11 +23,13 @@ interface IWalletCreateModal {
 }
 const WalletCreateModal: React.FC<IWalletCreateModal> = ({
   openModal,
+  deployWalletName,
   onSubmit,
   onClose,
   provider,
   price,
   currentAccount,
+  deployType,
 }) => {
   const [currentAddress, setAddress] = useState<string>('');
   const [addressList, setAddressList] = useState<Array<string>>([]);
@@ -70,7 +74,9 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
   }, [openModal]);
 
   useEffect(() => {
+    console.log('deployWalletName: ', deployWalletName);
     setAddress(currentAccount);
+    setWalletName(deployWalletName as string);
   }, []);
 
   const onCreateContract = async (): Promise<void> => {
@@ -88,6 +94,7 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
         onCancel={onClose}
         closable={false}
         maskClosable={false}
+        destroyOnClose
         footer={[
           <button key="back" className="mx-5 btn btn-ghost" onClick={onClose} disabled={toggleLoading}>
             Return
@@ -97,7 +104,7 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
             key={'submit'}
             //     type="primary"
             onClick={async (): Promise<void> => onCreateContract()}
-            disabled={addressList.length === 0 || signatureCount === null }>
+            disabled={addressList.length === 0 || signatureCount === null}>
             <Spin
               indicator={SpinIcon}
               style={{ color: 'purple', marginRight: '10px' }}
@@ -110,7 +117,12 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
         {/* action header */}
 
         <div className="m-3 w-[87%]">
-          <Input placeholder="Enter wallet name" onChange={(event): void => setWalletName(event.target.value)} />
+          <Input
+            placeholder="Enter wallet name"
+            value={walletName}
+            onChange={(event): void => setWalletName(event.target.value)}
+            disabled={deployType === 'Redeploy'}
+          />
         </div>
         <div className="flex items-center justify-between w-full ">
           <div className="w-full m-3">

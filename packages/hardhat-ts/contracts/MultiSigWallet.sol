@@ -22,6 +22,7 @@ contract MultiSigWallet {
   uint256 public signaturesRequired;
   uint256 public nonce;
   uint256 public chainId;
+  string public name;
 
   modifier onlyOwner() {
     require(isOwner[msg.sender], "Not owner");
@@ -38,12 +39,38 @@ contract MultiSigWallet {
     _;
   }
 
-  constructor(
+  // constructor(
+  //   uint256 _chainId,
+  //   address[] memory _owners,
+  //   uint256 _signaturesRequired,
+  //   address _factory
+  // ) payable requireNonZeroSignatures(_signaturesRequired) {
+  //   multiSigFactory = MultiSigFactory(_factory);
+  //   signaturesRequired = _signaturesRequired;
+  //   for (uint256 i = 0; i < _owners.length; i++) {
+  //     address owner = _owners[i];
+
+  //     require(owner != address(0), "constructor: zero address");
+  //     require(!isOwner[owner], "constructor: owner not unique");
+
+  //     isOwner[owner] = true;
+  //     owners.push(owner);
+
+  //     emit Owner(owner, isOwner[owner]);
+  //   }
+
+  //   chainId = _chainId;
+  // }
+  constructor(string memory _name) payable {
+    name = _name;
+  }
+
+  function init(
     uint256 _chainId,
     address[] memory _owners,
     uint256 _signaturesRequired,
     address _factory
-  ) payable requireNonZeroSignatures(_signaturesRequired) {
+  ) public payable {
     multiSigFactory = MultiSigFactory(_factory);
     signaturesRequired = _signaturesRequired;
     for (uint256 i = 0; i < _owners.length; i++) {

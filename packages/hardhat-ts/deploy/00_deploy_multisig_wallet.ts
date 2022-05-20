@@ -15,7 +15,8 @@ const func: DeployFunction = async (hre: HardhatRuntimeEnvironment) => {
 
   const MultiSigWalletDeployed = await deploy('MultiSigWallet', {
     from: deployer,
-    args: [31337, ['0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'], 1, multiSigFactoryDeployed.address],
+    // args: [31337, ['0x813f45BD0B48a334A3cc06bCEf1c44AAd907b8c1'], 1, multiSigFactoryDeployed.address],
+    args: ['default'],
     log: true,
   });
 

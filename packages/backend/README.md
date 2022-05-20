@@ -28,6 +28,7 @@ init a git inside a backend to push app changes to heroku
 
 ### push changes
 
+### run inside backend dir
 > yarn deploy
 
 it will commit and deploy your changes
