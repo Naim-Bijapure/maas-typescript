@@ -23,6 +23,7 @@ import { ethComponentsSettings } from '~~/config/app.config';
 import { IContractData } from '~~/models/Types';
 import { fetchContracts } from '~~/services/BackendService';
 import { useStore } from '~~/store/useStore';
+import { Link } from 'react-router-dom';
 
 const SpinIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
 
@@ -147,6 +148,9 @@ const Index: React.FC<any> = () => {
 
         {/* server down alert error */}
         <AlertModal openModal={!serverState} />
+        <Link to={'/testCreate2'}>
+          <button className="btn btn-primary">goto test creat2</button>
+        </Link>
       </Spin>
     </>
   );

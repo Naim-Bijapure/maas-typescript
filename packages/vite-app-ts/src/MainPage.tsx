@@ -7,7 +7,7 @@ import { asEthersAdaptor } from 'eth-hooks/functions';
 import React, { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
+import { MainPageHeader, createPagesAndTabs, TContractPageList, MainPageFooter } from './components/main';
 import Foooter from './components/main/Footer';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
@@ -19,6 +19,7 @@ import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 import { BURNER_FALLBACK_ENABLED, MAINNET_PROVIDER } from '~~/config/app.config';
 import Web3StorageTest from './views/Web3StorageTest';
+import Create2Test from './views/Create2Test';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -133,6 +134,15 @@ export const MainPage: FC = () => {
         content: (
           <>
             <Wallet key={ethersAppContext.account} />
+          </>
+        ),
+      },
+
+      {
+        name: 'testCreate2',
+        content: (
+          <>
+            <Create2Test />
           </>
         ),
       },

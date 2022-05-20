@@ -28,7 +28,7 @@ export const NETWORKS: Readonly<Record<TNetworkNames, TNetworkInfo>> = {
         name: "kovan",
         color: "#7003DD",
         chainId: 42,
-        url: `https://kovan.infura.io/v3/${INFURA_ID}`,
+        url: `https://kovan.infura.io/v3/d7d49f3bcbd943b6bceb4a7549cd1bb0`,
         blockExplorer: "https://kovan.etherscan.io/",
         faucet: "https://gitter.im/kovan-testnet/faucet", // https://faucet.kovan.network/
     },
