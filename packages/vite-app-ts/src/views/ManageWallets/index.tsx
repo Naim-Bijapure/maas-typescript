@@ -37,7 +37,7 @@ const Index: React.FC<any> = () => {
   const [state, dispatch] = useStore();
 
   const [openModal, setOpenModal] = useState(false);
-  const [deployType, setDeployType] = useState<'New' | 'Redeploy'>();
+  const [deployType, setDeployType] = useState<'New' | 'Redeploy'>('New');
   const [walletName, setWalletName] = useState<string>('');
 
   const [serverState, setServerState] = useState(true);
@@ -114,14 +114,25 @@ const Index: React.FC<any> = () => {
         proposals: [],
       };
 
-      // send contract data to server
-      const response = await API.post('/createContract', reqData);
-      console.log('create contract response: ', response);
+      if (deployType === 'New') {
+        // send contract data to server
+        const response = await API.post('/createContract', reqData);
+        console.log('create contract response: ', response);
+      }
+
+      if (deployType === 'Redeploy') {
+        // send contract data to server
+        const response = await API.get(
+          `/updateChain/${reqData['contractAddress']}/${ethersAppContext?.chainId as number}`
+        );
+        console.log('update chain contract response: ', response.data);
+      }
 
       // fetch updated contract list
       await fetchAllContracts();
 
       setOpenModal(false);
+      setWalletName('');
     } catch (error) {
       console.log('error: ', error);
       notification['error']({
@@ -143,9 +154,9 @@ const Index: React.FC<any> = () => {
   }, [state.ethersAppContext?.account]);
 
   useEffect(() => {
-    console.log('state: ', state);
+    // console.log('state: ', state);
     const isUserLoggedIn = window.localStorage.getItem('maas-userLogin');
-    console.log('isUserLoggedIn: ', isUserLoggedIn);
+    // console.log('isUserLoggedIn: ', isUserLoggedIn);
     if (isUserLoggedIn === null) {
       setTimeout(() => {
         state.ethersAppContext?.deactivate();
@@ -162,6 +173,11 @@ const Index: React.FC<any> = () => {
       // }, 100);
     }
   }, [state.isUserLoggedIn]);
+  const onCloseModal = (): any => {
+    setOpenModal(false);
+    setWalletName('');
+    setDeployType('New');
+  };
 
   return (
     <>
@@ -180,7 +196,7 @@ const Index: React.FC<any> = () => {
           provider={state.ethersAppContext?.provider}
           currentAccount={state.ethersAppContext?.account as string}
           onSubmit={onWalletCreate}
-          onClose={(): void => setOpenModal(false)}
+          onClose={onCloseModal}
         />
         <div className="flex  items-center justify-around xl:flex xl:flex-row xl:justify-between ">
           <div className="text-3xl font-bold  xl:text-5xl ">Your wallets</div>

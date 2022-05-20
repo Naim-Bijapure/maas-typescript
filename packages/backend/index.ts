@@ -203,6 +203,25 @@ app.post("/api/proposal/execute", async (req, res) => {
     return res.json({ contractsData });
 });
 
+// ---------------------
+// update chain id of redeploy wallet
+// ---------------------
+
+app.get("/api/updateChain/:contractAddress/:chainId", async (req, res) => {
+    let { contractAddress, chainId } = req.params;
+
+    let updatedContractData = contractsData.map((data) => {
+        if (data.contractAddress === contractAddress) {
+            data.chainIds.push(Number(chainId));
+        }
+        return data;
+    });
+
+    contractsData = [...updatedContractData];
+
+    return res.json({ updatedContractData: contractsData });
+});
+
 app.listen(port, "0.0.0.0", () => {
     console.log(` application is running on port ${port}.`);
 });
