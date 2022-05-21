@@ -26,7 +26,7 @@ import WalletCreateModal from './components/WalleCreateModal';
 // @ts-ignore
 import EthIcon from '~~/assets/eth_icon.svg?component';
 import API from '~~/config/API';
-import { ethComponentsSettings } from '~~/config/app.config';
+import { ethComponentsSettings, MAINNET_PROVIDER } from '~~/config/app.config';
 import { IContractData } from '~~/models/Types';
 import { fetchContracts } from '~~/services/BackendService';
 import { useStore } from '~~/store/useStore';
@@ -193,7 +193,7 @@ const Index: React.FC<any> = () => {
           deployType={deployType}
           openModal={openModal}
           price={state.ethPrice as number}
-          provider={state.ethersAppContext?.provider}
+          provider={MAINNET_PROVIDER}
           currentAccount={state.ethersAppContext?.account as string}
           onSubmit={onWalletCreate}
           onClose={onCloseModal}

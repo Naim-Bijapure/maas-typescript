@@ -7,6 +7,7 @@ import { BytesLike } from 'ethers';
 import React, { useEffect, useState } from 'react';
 
 import API from '~~/config/API';
+import { MAINNET_PROVIDER } from '~~/config/app.config';
 import { IProposal } from '~~/models/Types';
 import { useStore } from '~~/store/useStore';
 
@@ -174,7 +175,7 @@ const ProposeModal: React.FC<IProposeTranscaction> = ({ openModal, onClose, onSu
           <AddressInput
             key={selectedAction}
             address={toAddress}
-            ensProvider={ethersAppContext?.provider}
+            ensProvider={MAINNET_PROVIDER}
             placeholder={'Enter  address'}
             onChange={setToAddress}
           />
