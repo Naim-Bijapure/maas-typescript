@@ -1,5 +1,5 @@
 import { SignerWithAddress } from '@nomiclabs/hardhat-ethers/signers';
-import { formatEther, hexlify, hexZeroPad, parseEther } from 'ethers/lib/utils';
+import { hexlify, hexZeroPad, parseEther } from 'ethers/lib/utils';
 // import { MultiSigWallet } from 'contract-types';
 // import { MultiSigFactory__factory } from 'contract-types/factories/MultiSigFactory__factory';
 import { MultiSigFactory, MultiSigWallet__factory } from 'generated/contract-types';
@@ -33,29 +33,52 @@ describe('MultiSigFactory Test', () => {
 
   describe('Testing MultiSigWallet functionality', () => {
     it('deploy with create 2', async () => {
-      console.log('MultiSigFactory: ', MultiSigFactory.address);
       /** ----------------------
        * wrap the string in to id and create hash and sort for salt
        * ---------------------*/
       const id = ethers.utils.id(owner.address + 'NNN');
       const hash = ethers.utils.keccak256(id);
       const salt = hexZeroPad(hexlify(hash), 32);
-      const tx = await MultiSigFactory.create(CHAIN_ID, [owner.address], signatureRequired, salt, 'NNN', { value: parseEther('1') });
-      const rcpt = await tx.wait();
-      const CreateEvent = rcpt.events?.find((eventData) => eventData.event === 'Create');
-      const contractAddress = CreateEvent?.args?.contractAddress;
+      let tx = await MultiSigFactory.create(CHAIN_ID, [owner.address], signatureRequired, salt, 'NN', { value: parseEther('1') });
+      let rcpt = await tx.wait();
+      let CreateEvent = rcpt.events?.find((eventData) => eventData.event === 'Create');
+      let contractAddress = CreateEvent?.args?.contractAddress;
 
-      const mWallet = MultiSigWalletFactory.attach(contractAddress as string);
-      const name = await mWallet.name();
-      const sig = await mWallet.signaturesRequired();
-      const owners = await mWallet.owners(0);
+      let wallet = MultiSigWalletFactory.attach(contractAddress as string);
+      let chainId = await wallet.chainId();
+      let name = await wallet.name();
+      let signaturesRequired = await wallet.signaturesRequired();
+      let owners = await wallet.owners(0);
+      let walletAddress = wallet.address;
 
-      const walletBalance = await ethers.provider.getBalance(contractAddress as string);
-      console.log('walletBalance: ', formatEther(walletBalance.toString()));
-      console.log('owners: ', owners);
-      console.log('sig: ', sig.toString());
+      console.log('---------------- CHAIN ID 1-----------------------');
+      console.log('MultiSigFactory address: ', MultiSigFactory.address);
+      console.log('chainId: ', chainId.toNumber());
       console.log('name: ', name);
-      console.log('mWallet: ', mWallet.address);
+      console.log('signaturesRequired: ', signaturesRequired.toNumber());
+      console.log('owners: ', owners);
+      console.log('walletAddress: ', walletAddress);
+
+      // different chain id
+      const cId = 2;
+      tx = await MultiSigFactory.create(cId, [owner.address], signatureRequired, salt, 'NN', { value: parseEther('1') });
+      rcpt = await tx.wait();
+      CreateEvent = rcpt.events?.find((eventData) => eventData.event === 'Create');
+      contractAddress = CreateEvent?.args?.contractAddress;
+
+      wallet = MultiSigWalletFactory.attach(contractAddress as string);
+      chainId = await wallet.chainId();
+      name = await wallet.name();
+      signaturesRequired = await wallet.signaturesRequired();
+      owners = await wallet.owners(0);
+      walletAddress = wallet.address;
+      console.log('---------------- CHAIN ID 2-----------------------');
+      console.log('MultiSigFactory address: ', MultiSigFactory.address);
+      console.log('chainId: ', chainId.toNumber());
+      console.log('name: ', name);
+      console.log('signaturesRequired: ', signaturesRequired.toNumber());
+      console.log('owners: ', owners);
+      console.log('walletAddress: ', walletAddress);
     });
   });
 });

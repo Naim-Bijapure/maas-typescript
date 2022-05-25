@@ -39,12 +39,42 @@ contract MultiSigWallet {
     _;
   }
 
-  // constructor(
+  constructor(
+    uint256 _chainId,
+    address[] memory _owners,
+    uint256 _signaturesRequired,
+    address _factory,
+    string memory _name
+  ) payable requireNonZeroSignatures(_signaturesRequired) {
+    multiSigFactory = MultiSigFactory(_factory);
+    name = _name;
+
+    signaturesRequired = _signaturesRequired;
+    for (uint256 i = 0; i < _owners.length; i++) {
+      address owner = _owners[i];
+
+      require(owner != address(0), "constructor: zero address");
+      require(!isOwner[owner], "constructor: owner not unique");
+
+      isOwner[owner] = true;
+      owners.push(owner);
+
+      emit Owner(owner, isOwner[owner]);
+    }
+
+    chainId = _chainId;
+  }
+
+  // constructor(string memory _name) payable {
+  //   name = _name;
+  // }
+
+  // function init(
   //   uint256 _chainId,
   //   address[] memory _owners,
   //   uint256 _signaturesRequired,
   //   address _factory
-  // ) payable requireNonZeroSignatures(_signaturesRequired) {
+  // ) public payable {
   //   multiSigFactory = MultiSigFactory(_factory);
   //   signaturesRequired = _signaturesRequired;
   //   for (uint256 i = 0; i < _owners.length; i++) {
@@ -61,32 +91,6 @@ contract MultiSigWallet {
 
   //   chainId = _chainId;
   // }
-  constructor(string memory _name) payable {
-    name = _name;
-  }
-
-  function init(
-    uint256 _chainId,
-    address[] memory _owners,
-    uint256 _signaturesRequired,
-    address _factory
-  ) public payable {
-    multiSigFactory = MultiSigFactory(_factory);
-    signaturesRequired = _signaturesRequired;
-    for (uint256 i = 0; i < _owners.length; i++) {
-      address owner = _owners[i];
-
-      require(owner != address(0), "constructor: zero address");
-      require(!isOwner[owner], "constructor: owner not unique");
-
-      isOwner[owner] = true;
-      owners.push(owner);
-
-      emit Owner(owner, isOwner[owner]);
-    }
-
-    chainId = _chainId;
-  }
 
   function addSigner(address newSigner, uint256 newSignaturesRequired) public onlySelf requireNonZeroSignatures(newSignaturesRequired) {
     require(newSigner != address(0), "addSigner: zero address");

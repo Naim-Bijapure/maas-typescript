@@ -44,10 +44,22 @@ contract MultiSigFactory {
     // emit Create(id, address(multiSig), msg.sender, _owners, _signaturesRequired);
     // emit Owners(address(multiSig), _owners, _signaturesRequired);
 
-    address multiSig_address = payable(Create2.deploy(0, _salt, abi.encodePacked(type(MultiSigWallet).creationCode, abi.encode(_name))));
+    address multiSig_address = payable(
+      Create2.deploy(
+        msg.value,
+        _salt,
+        abi.encodePacked(
+        type(MultiSigWallet).creationCode,
+        abi.encode(_chainId, _owners, _signaturesRequired, address(this), _name)
+        )
+
+      )
+    );
+
+    // console.log("multiSig_address: ", multiSig_address);
     MultiSigWallet multiSig = MultiSigWallet(payable(multiSig_address));
     // add init values
-    multiSig.init{ value: msg.value }(_chainId, _owners, _signaturesRequired, address(this));
+    // multiSig.init{ value: msg.value }(_chainId, _owners, _signaturesRequired, address(this));
 
     multiSigs.push(multiSig);
     existsMultiSig[address(multiSig_address)] = true;

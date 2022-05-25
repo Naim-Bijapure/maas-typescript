@@ -115,9 +115,9 @@ export const ethComponentsSettings: IEthComponentsSettings = {
   },
 };
 
-// export const BASE_URL = 'http://localhost:4000/api';
+export const BASE_URL = 'http://localhost:4000/api';
 
-export const BASE_URL = 'https://maas-backend.herokuapp.com/api';
+// export const BASE_URL = 'https://maas-backend.herokuapp.com/api';
 // export const BASE_URL = targetNetwork === 'localhost' ? 'http://localhost:4000/api' : 'https://maas-backend.herokuapp.com/api';
 
 console.log('BASE_URL: ', BASE_URL);
