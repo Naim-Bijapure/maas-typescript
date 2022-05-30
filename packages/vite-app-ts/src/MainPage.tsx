@@ -1,13 +1,13 @@
-import '~~/styles/main-page.scss';
 import { NETWORKS } from '@scaffold-eth/common/src/constants';
 import { useBalance, useEthersAdaptorFromProviderOrSigners } from 'eth-hooks';
-import { TEthersModalConnector, useEthersAppContext } from 'eth-hooks/context';
+import { useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
+import '~~/styles/main-page.scss';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList, MainPageFooter } from './components/main';
+import { createPagesAndTabs, MainPageHeader, TContractPageList } from './components/main';
 import Foooter from './components/main/Footer';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
@@ -18,8 +18,6 @@ import { useCreateAntNotificationHolder } from '~~/components/main/hooks/useAntN
 import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 import { BURNER_FALLBACK_ENABLED, MAINNET_PROVIDER } from '~~/config/app.config';
-import Web3StorageTest from './views/Web3StorageTest';
-import Create2Test from './views/Create2Test';
 
 /**
  * ⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️⛳️
@@ -135,15 +133,6 @@ export const MainPage: FC = () => {
         content: (
           <>
             <Wallet key={ethersAppContext.account} />
-          </>
-        ),
-      },
-
-      {
-        name: 'testCreate2',
-        content: (
-          <>
-            <Create2Test />
           </>
         ),
       },

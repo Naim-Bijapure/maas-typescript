@@ -11,7 +11,7 @@ import {
 import { TransactionResponse } from '@ethersproject/abstract-provider';
 import { hexZeroPad, hexlify } from '@ethersproject/bytes';
 import { parseEther } from '@ethersproject/units';
-import { notification } from 'antd';
+import { notification, Spin } from 'antd';
 import { transactor, TTransactorFunc } from 'eth-components/functions';
 import { TEthersModalConnector } from 'eth-hooks/context';
 import { BigNumberish, utils } from 'ethers';
@@ -179,6 +179,8 @@ const Index: React.FC<any> = () => {
     setDeployType('New');
   };
 
+  const isFactoryLoaded = state.multiSigFactory !== undefined;
+
   return (
     <>
       {/* <Spin
@@ -201,9 +203,12 @@ const Index: React.FC<any> = () => {
         <div className="flex  items-center justify-around xl:flex xl:flex-row xl:justify-between ">
           <div className="text-3xl font-bold  xl:text-5xl ">Your wallets</div>
           <div>
-            <button className="btn btn-secondary " onClick={(): void => setOpenModal(true)}>
+            <button className="btn btn-secondary " onClick={(): void => setOpenModal(true)} disabled={!isFactoryLoaded}>
               <span>Create wallet</span>
               <AddWalletIcon className="mx-1 text-2xl" />
+              <div className={`mt-2 ${!isFactoryLoaded ? 'block' : 'hidden'}`}>
+                <Spin />
+              </div>
             </button>
           </div>
         </div>

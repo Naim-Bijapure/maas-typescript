@@ -4,7 +4,7 @@ import { hexlify, hexZeroPad, parseEther } from 'ethers/lib/utils';
 // import { MultiSigFactory__factory } from 'contract-types/factories/MultiSigFactory__factory';
 import { MultiSigFactory, MultiSigWallet__factory } from 'generated/contract-types';
 import { ethers } from 'hardhat';
-import { it } from 'mocha';
+// import { it } from 'mocha';
 
 describe('MultiSigFactory Test', () => {
   let MultiSigFactory: MultiSigFactory;
@@ -61,7 +61,7 @@ describe('MultiSigFactory Test', () => {
 
       // different chain id
       const cId = 2;
-      tx = await MultiSigFactory.create(cId, [owner.address], signatureRequired, salt, 'NN', { value: parseEther('1') });
+      tx = await MultiSigFactory.create(cId, [owner.address], signatureRequired, salt, 'NNN', { value: parseEther('1') });
       rcpt = await tx.wait();
       CreateEvent = rcpt.events?.find((eventData) => eventData.event === 'Create');
       contractAddress = CreateEvent?.args?.contractAddress;
