@@ -10,12 +10,14 @@ export interface IStoreState {
   multiSigFactory?: MultiSigFactory;
   contracts?: IContractData[];
   multiSigWallet?: MultiSigWallet;
+  isUserLoggedIn?: boolean;
   // multiSigWalletLoaded?: MultiSigWallet;
 }
 export type dispatch = React.Dispatch<{ payload: any }>;
 
 export interface IContractData {
   walletName: string;
+  chainIds: number[];
   account: string;
   contractAddress: string;
   contractId: number;
@@ -28,6 +30,7 @@ export interface IContractData {
 
 export interface IProposal {
   proposalId: number;
+  chainId: number;
   nonce: number;
   eventName: string;
   contractAddress?: string;

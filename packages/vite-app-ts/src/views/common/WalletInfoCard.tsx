@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { PlusCircleOutlined as AddProposalIcon } from '@ant-design/icons';
+import { PlusCircleOutlined as AddProposalIcon, RedoOutlined as ReDeployIcon } from '@ant-design/icons';
 import { PunkBlockie, Balance, Address } from 'eth-components/ant';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -12,11 +12,15 @@ interface IWalletInfoCard {
   isManageWalletScreen: boolean;
   contractDetails: IContractData;
   updateContractList?: () => Promise<void>;
+  isReDeploy?: boolean;
+  onRedeploy?: (arg: string) => void;
 }
 const WalletInfoCard: React.FC<IWalletInfoCard> = ({
   isManageWalletScreen,
   contractDetails,
   updateContractList: fetchAllContract,
+  isReDeploy,
+  onRedeploy,
 }) => {
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [onDelayClose, setOnDelayClose] = useState<boolean>(false);
@@ -67,9 +71,19 @@ const WalletInfoCard: React.FC<IWalletInfoCard> = ({
                 </div>
                 <div className=" items-center justify-between  w-full xl:ml-auto card-actions">
                   <div className="font-bold text-gray-400 ">{contractDetails?.createdAt}</div>
-                  <Link to={`/wallet/${contractDetails?.contractId}`}>
-                    <button className="btn btn-secondary">Open</button>
-                  </Link>
+                  {/* on open */}
+                  {isReDeploy === false && (
+                    <Link to={`/wallet/${contractDetails?.contractId}`}>
+                      <button className="btn btn-secondary">Open</button>
+                    </Link>
+                  )}
+                  {/* on redeploy */}
+                  {isReDeploy === true && onRedeploy && (
+                    <button className="btn btn-error" onClick={(): any => onRedeploy(contractDetails.walletName)}>
+                      <span className="mx-2">Re-deploy</span>
+                      <ReDeployIcon className="" style={{ fontSize: '20px', marginBottom: '3px' }} />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -101,6 +115,8 @@ const WalletInfoCard: React.FC<IWalletInfoCard> = ({
                 <div className="card-title n-balance-lg  xl:mt-4">
                   <Balance price={1000} address={contractDetails?.contractAddress} />
                 </div>
+
+                <div className="text-xl font-bold">{contractDetails?.walletName}</div>
                 <div className="mr-auto text-left">
                   <div className="n-address">
                     <Address address={contractDetails?.contractAddress} />

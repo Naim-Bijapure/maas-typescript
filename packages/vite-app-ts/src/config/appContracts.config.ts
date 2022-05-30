@@ -26,11 +26,6 @@ export const appContractsConfig = () => {
       // --------------------------------------------------
       // 🙋🏽‍♂️ Add your hadrdhat contracts here
       // --------------------------------------------------
-      // YourContract: createConnectorForHardhatContract(
-      //   'YourContract',
-      //   hardhatContracts.YourContract__factory,
-      //   hardhatContractsJson
-      // ),
 
       MultiSigFactory: createConnectorForHardhatContract(
         'MultiSigFactory',
@@ -41,6 +36,19 @@ export const appContractsConfig = () => {
       MultiSigWallet: createConnectorForHardhatContract(
         'MultiSigWallet',
         hardhatContracts.MultiSigWallet__factory,
+        hardhatContractsJson
+      ),
+
+      YourFactory: createConnectorForHardhatContract(
+        'YourFactory',
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        hardhatContracts.YourFactory__factory,
+        hardhatContractsJson
+      ),
+
+      YourContract: createConnectorForHardhatContract(
+        'YourContract',
+        hardhatContracts.YourContract__factory,
         hardhatContractsJson
       ),
 

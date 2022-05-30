@@ -1,5 +1,6 @@
 export interface IContractData {
     walletName: string;
+    chainIds: number[];
     account: string;
     contractAddress: string;
     contractId: number;
@@ -12,6 +13,7 @@ export interface IContractData {
 
 export interface IProposal {
     proposalId: number;
+    chainId: number;
     nonce: number;
     eventName: string;
     contractAddress?: string;

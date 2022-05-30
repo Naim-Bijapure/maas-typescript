@@ -5,7 +5,7 @@ import { dispatch, IStoreState } from '~~/models/Types';
 
 export type TypeStoreState = [IStoreState, dispatch];
 
-const initialState: IStoreState = { contracts: [], ethPrice: 0 };
+const initialState: IStoreState = { contracts: [], ethPrice: 0, isUserLoggedIn: false };
 
 const state = [initialState, (): void => undefined];
 

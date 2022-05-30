@@ -1,13 +1,13 @@
-import '~~/styles/main-page.scss';
 import { NETWORKS } from '@scaffold-eth/common/src/constants';
 import { useBalance, useEthersAdaptorFromProviderOrSigners } from 'eth-hooks';
 import { useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
-import React, { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { BrowserRouter, Switch } from 'react-router-dom';
+import '~~/styles/main-page.scss';
 
-import { MainPageHeader, createPagesAndTabs, TContractPageList } from './components/main';
+import { createPagesAndTabs, MainPageHeader, TContractPageList } from './components/main';
 import Foooter from './components/main/Footer';
 import { useStore } from './store/useStore';
 import ManageWallets from './views/ManageWallets';
@@ -110,6 +110,7 @@ export const MainPage: FC = () => {
     window.ethereum?.on('networkChanged', function () {
       window.location.reload();
     });
+    console.log('states', state);
   }, []);
 
   // -----------------------------
@@ -135,6 +136,15 @@ export const MainPage: FC = () => {
           </>
         ),
       },
+
+      // {
+      //   name: 'web3Storage',
+      //   content: (
+      //     <>
+      //       <Web3StorageTest />
+      //     </>
+      //   ),
+      // },
     ],
   };
   const { tabContents, tabMenu } = createPagesAndTabs(pageList, route, setRoute);

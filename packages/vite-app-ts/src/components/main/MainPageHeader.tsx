@@ -19,6 +19,7 @@ import { useAntNotification } from '~~/components/main/hooks/useAntNotification'
 import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
 import { TARGET_NETWORK_INFO } from '~~/config/app.config';
 import { getNetworkInfo } from '~~/functions';
+import { useStore } from '~~/store/useStore';
 
 // displays a page header
 export interface IMainPageHeaderProps {
@@ -37,6 +38,7 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
   const selectedChainId = ethersAppContext.chainId;
 
   const notification = useAntNotification();
+  const [state, dispatch] = useStore();
 
   // 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation
   const [gasPrice] = useGasPrice(ethersAppContext.chainId, 'fast', getNetworkInfo(ethersAppContext.chainId));
@@ -87,6 +89,9 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
               <a
                 onClick={(): void => {
                   ethersAppContext.disconnectModal();
+                  dispatch({ payload: { isUserLoggedIn: false } });
+                  // window.localStorage.clear();
+                  window.localStorage.removeItem('maas-userLogin');
                 }}>
                 logout
                 <LogoutIcon title="logout" />
@@ -104,9 +109,10 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
         <div className="mx-3 text-3xl">
           <LoginIcon
             onClick={(): void => {
-              //
               const connector = props.scaffoldAppProviders.createLoginConnector?.();
               ethersAppContext.openModal(connector as TEthersModalConnector, onLoginError);
+              dispatch({ payload: { isUserLoggedIn: true } });
+              window.localStorage.setItem('maas-userLogin', 'true');
             }}
           />
         </div>
@@ -212,10 +218,7 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
         </div>
 
         <div className="w-[40%] xl:w-[10%] xl:mr-10 ">
-          <select
-            className="w-full max-w-xs select select-secondary"
-            onChange={onChangeNetwork}
-            value={selectedNetwork}>
+          <select className="w-full max-w-xs select select-primary" onChange={onChangeNetwork} value={selectedNetwork}>
             <option disabled>Select Network</option>
             {/* {options} */}
             {Object.keys(NETWORKS).map((networkName, index) => {
