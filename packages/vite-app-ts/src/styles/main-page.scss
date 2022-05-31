@@ -31,19 +31,3 @@
 .n-blue {
   border: 1px solid blue;
 }
-
-/* override ant design css */
-
-/*  for ant modal*/
-.ant-modal-content,
-.ant-modal-header {
-  border-radius: 20px;
-  /* background: red; */
-}
-
-/*  ant notfication*/
-.ant-notification-notice {
-  border-radius: 20px;
-}
-// .App {
-// }

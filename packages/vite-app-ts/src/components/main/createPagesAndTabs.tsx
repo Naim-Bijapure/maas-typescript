@@ -69,12 +69,12 @@ export const createPagesAndTabs = (
 
   const pageContent = (
     <>
-      <Route key={'main'} exact path={'/'}>
-        {pageList.mainPage.content}
+      <Route key={'main'} path={'/'} element={pageList.mainPage.content}>
+        {/* {pageList.mainPage.content} */}
       </Route>
       {pageList.pages.map(({ name, content }) => (
-        <Route key={name} path={'/' + getPath(name)}>
-          {content}
+        <Route key={name} path={'/' + getPath(name)} element={content}>
+          {/* {content} */}
           {/* <Foooter /> */}
         </Route>
       ))}

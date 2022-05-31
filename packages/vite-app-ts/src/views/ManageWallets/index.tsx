@@ -38,6 +38,7 @@ const Index: React.FC<any> = () => {
 
   const [openModal, setOpenModal] = useState(false);
   const [deployType, setDeployType] = useState<'New' | 'Redeploy'>('New');
+  const [reDeployData, setRedeployData] = useState<IContractData | undefined>(undefined);
   const [walletName, setWalletName] = useState<string>('');
 
   const [serverState, setServerState] = useState(true);
@@ -142,11 +143,11 @@ const Index: React.FC<any> = () => {
     }
   };
 
-  const onRedeploy = (walletName: string): any => {
-    console.log('walletName: ', walletName);
+  // const onRedeploy = (walletName: string): any => {
+  const onRedeploy = (contractData: IContractData): void => {
+    setRedeployData(contractData);
     setDeployType('Redeploy');
     setOpenModal(true);
-    setWalletName(walletName);
   };
 
   useEffect(() => {
@@ -190,7 +191,7 @@ const Index: React.FC<any> = () => {
       <div className={state.ethersAppContext?.active ? ' m-5' : ' hidden'}>
         {/* wallet modal */}
         <WalletCreateModal
-          deployWalletName={walletName}
+          isFactoryLoaded={isFactoryLoaded}
           key={walletName}
           deployType={deployType}
           openModal={openModal}
@@ -199,6 +200,7 @@ const Index: React.FC<any> = () => {
           currentAccount={state.ethersAppContext?.account as string}
           onSubmit={onWalletCreate}
           onClose={onCloseModal}
+          reDeployData={reDeployData as IContractData}
         />
         <div className="flex  items-center justify-around xl:flex xl:flex-row xl:justify-between ">
           <div className="text-3xl font-bold  xl:text-5xl ">Your wallets</div>
@@ -224,7 +226,7 @@ const Index: React.FC<any> = () => {
                   {
                     <WalletInfoCard
                       isReDeploy={isReDeploy}
-                      onRedeploy={onRedeploy}
+                      onRedeploy={(): unknown => onRedeploy(data)}
                       key={index}
                       contractDetails={data}
                       isManageWalletScreen={true}

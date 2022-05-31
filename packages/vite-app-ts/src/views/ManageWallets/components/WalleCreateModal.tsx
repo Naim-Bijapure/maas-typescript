@@ -4,11 +4,12 @@ import { Modal, InputNumber, Input, Spin } from 'antd';
 import { Address, AddressInput, EtherInput } from 'eth-components/ant';
 import React, { useEffect, useState } from 'react';
 
+import { IContractData } from '~~/models/Types';
+
 const SpinIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 interface IWalletCreateModal {
   openModal: boolean;
-  deployWalletName?: string;
   deployType?: string;
   onSubmit: (
     walletName: string,
@@ -20,16 +21,19 @@ interface IWalletCreateModal {
   provider: any;
   price: number;
   currentAccount: string;
+  isFactoryLoaded: boolean;
+  reDeployData: IContractData;
 }
 const WalletCreateModal: React.FC<IWalletCreateModal> = ({
   openModal,
-  deployWalletName,
   onSubmit,
   onClose,
   provider,
   price,
   currentAccount,
   deployType,
+  isFactoryLoaded,
+  reDeployData,
 }) => {
   const [currentAddress, setAddress] = useState<string>('');
   const [addressList, setAddressList] = useState<Array<string>>([]);
@@ -73,28 +77,44 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
     }
   }, [openModal]);
 
-  useEffect(() => {
-    console.log('deployWalletName: ', deployWalletName);
-    setAddress(currentAccount);
-    setWalletName(deployWalletName as string);
-  }, []);
-
   const onCreateContract = async (): Promise<void> => {
     setToggleLoading(true);
     await onSubmit(walletName, addressList, signatureCount as number, fundAmount);
     setToggleLoading(false);
   };
 
+  useEffect(() => {
+    setAddress(currentAccount);
+  }, [isFactoryLoaded]);
+
+  useEffect(() => {
+    if (reDeployData) {
+      setWalletName(reDeployData['walletName']);
+      setAddressList([...new Set(reDeployData['owners'])]);
+      setSignatureCount(reDeployData['signaturesRequired']);
+    }
+  }, [reDeployData, deployType]);
+
+  /** ----------------------
+   * reset data on close
+   * ---------------------*/
+  useEffect(() => {
+    if (openModal === false) {
+      setWalletName('');
+      setAddressList([]);
+      setSignatureCount(null);
+    }
+  }, [openModal]);
+
   return (
     <div>
       <Modal
         title="Create new wallet"
         visible={openModal}
-        // onOk={onSubmit}
         onCancel={onClose}
         closable={false}
         maskClosable={false}
-        destroyOnClose
+        destroyOnClose={true}
         footer={[
           <button key="back" className="mx-5 btn btn-ghost" onClick={onClose} disabled={toggleLoading}>
             Return
@@ -104,7 +124,9 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
             key={'submit'}
             //     type="primary"
             onClick={async (): Promise<void> => onCreateContract()}
-            disabled={addressList.length === 0 || signatureCount === null}>
+            disabled={
+              addressList.length === 0 || signatureCount === null || signatureCount <= addressList.length === false
+            }>
             <Spin
               indicator={SpinIcon}
               style={{ color: 'purple', marginRight: '10px' }}
@@ -157,7 +179,13 @@ const WalletCreateModal: React.FC<IWalletCreateModal> = ({
           })}
         </div>
         <div className="w-full  m-3">
-          <InputNumber style={{ width: '200px' }} placeholder="signature count" min={1} onChange={setSignatureCount} />
+          <InputNumber
+            style={{ width: '200px' }}
+            placeholder="signature count"
+            min={1}
+            onChange={setSignatureCount}
+            value={signatureCount as number}
+          />
         </div>
 
         <div className="w-full m-3">

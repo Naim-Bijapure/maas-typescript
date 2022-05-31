@@ -4,7 +4,7 @@ import { useEthersAppContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
 import { FC, useEffect, useState } from 'react';
-import { BrowserRouter, Switch } from 'react-router-dom';
+import { BrowserRouter, Routes } from 'react-router-dom';
 import '~~/styles/main-page.scss';
 
 import { createPagesAndTabs, MainPageHeader, TContractPageList } from './components/main';
@@ -89,6 +89,7 @@ export const MainPage: FC = () => {
   }, [setRoute]);
 
   const multiSigFactory = useAppContracts('MultiSigFactory', ethersAppContext.chainId);
+  // TODO:load a static abi instead getting from a deployement
   const multiSigWallet = useAppContracts('MultiSigWallet', ethersAppContext.chainId);
 
   // -----------------
@@ -155,7 +156,7 @@ export const MainPage: FC = () => {
         <MainPageHeader scaffoldAppProviders={scaffoldAppProviders} price={ethPrice} />
         <div className="flex-grow">
           <BrowserRouter>
-            <Switch>{tabContents}</Switch>
+            <Routes>{tabContents}</Routes>
           </BrowserRouter>
         </div>
         {ethersAppContext.account && <Foooter />}

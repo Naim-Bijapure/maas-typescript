@@ -6,7 +6,7 @@ interface IAlertModal {
 const AlertModal: React.FC<IAlertModal> = ({ openModal }) => {
   return (
     <div>
-      <input type="checkbox" id="my-modal-4" className="modal-toggle" checked={openModal} />
+      <input type="checkbox" id="my-modal-4" className="modal-toggle" checked={openModal} onChange={(): any => null} />
       <label htmlFor="my-modal-4" className=" cursor-pointer modal ">
         <label className="relative border-4 border-warning modal-box" htmlFor="">
           <h3 className="text-lg font-bold">Ooops server down!</h3>

@@ -1,6 +1,6 @@
 import { Tabs } from 'antd';
 import React, { useCallback, useEffect, useState } from 'react';
-import { Redirect, useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 
 import WalletInfoCard from '../common/WalletInfoCard';
 
@@ -50,7 +50,7 @@ const Index: React.FC = () => {
   if (state.contracts?.length === 0) {
     return (
       <>
-        <Redirect to="/" />
+        <Navigate to="/" />
       </>
     );
   }

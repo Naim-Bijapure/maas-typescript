@@ -35,7 +35,7 @@
         "postinstall": "husky install",
         "lint": "yarn workspace @scaffold-eth/vite-app lint --fix && yarn workspace @scaffold-eth/common lint --fix && yarn workspace @scaffold-eth/hardhat lint --fix",
         "backend": "yarn workspace @scaffold-eth/backend serve",
-        "release":"yarn contracts:build && yarn deploy && yarn build && yarn surge"
+        "release": "yarn contracts:build && yarn deploy && yarn build && yarn surge"
     },
     "workspaces": {
         "packages": [
@@ -93,6 +93,7 @@
     },
     "dependencies": {
         "ipfs-http-client": "^56.0.3",
+        "react-router-dom": "latest",
         "web3.storage": "^4.2.0"
     }
 }
